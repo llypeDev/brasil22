@@ -54,7 +54,9 @@ abrangências idênticas em votos, seções, comparecimento, brancos, nulos e si
   do turno 2 e a apuração na página. Depois da data, a página avisa que os resultados não estão nela.
 - **Hospedagem**: servidor Node 22.13+ com disco gravável para `dados/` (feed, arquivo e
   pedidos). Atrás de proxy, `CONFIAR_PROXY=1`. Sem segredos obrigatórios; `PEDIDOS_SAL` próprio é
-  recomendado.
+  recomendado. Na Vercel (`vercel.json`), o feed oficial é estático e a simulação roda numa
+  função, mas não há presença nem pedidos (ver README, seção Vercel), e dados novos dependem de
+  um novo deploy.
 - **Contato dos pedidos**: os pedidos ficam no SQLite; não há envio de e-mail nem painel — quem
   opera consulta o banco (`dados/privado/pedidos.sqlite`).
 

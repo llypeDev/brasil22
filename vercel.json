@@ -1,0 +1,31 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build:vercel",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/servidor.mjs": {
+      "includeFiles": "{dados/publicado/oficial/**,config/marca.json,public/geo/mundo-v1.json}"
+    }
+  },
+  "rewrites": [
+    { "source": "/feed/fotos/:eleicao/:uf/:arquivo", "destination": "https://resultados.tse.jus.br/oficial/ele2026/:eleicao/fotos/:uf/:arquivo" },
+    { "source": "/feed/simulacao/:caminho*", "destination": "/api/servidor" },
+    { "source": "/feed/cenario/:caminho*", "destination": "/api/servidor" },
+    { "source": "/api/saude", "destination": "/api/servidor" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), screen-wake-lock=(self), fullscreen=(self)" },
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" }
+      ]
+    },
+    { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+    { "source": "/geo/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }] },
+    { "source": "/feed/fotos/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }] }
+  ]
+}

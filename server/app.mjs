@@ -17,6 +17,7 @@ import { readFile, readdir, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, normalize, sep } from 'node:path';
 import { enviarJson, erro, lerCorpo } from './lib/http.mjs';
+import { anuncioAtivo } from './lib/anuncio.mjs';
 import { criarPresenca } from './presenca.mjs';
 import { criarPedidos } from './pedidos.mjs';
 import { criarFotos } from './fotos.mjs';
@@ -94,10 +95,7 @@ export async function criarApp({ raiz, producao = process.env.NODE_ENV === 'prod
         if (req.method === 'POST') return enviarJson(req, res, simulacao.controlar(await lerCorpo(req, 512)), { etag: false, cache: 'no-store' });
         return enviarJson(req, res, { agora: simulacao.relogio(), limites: simulacao.limites }, { etag: false, cache: 'no-store' });
       }
-      if (p === '/feed/anuncio.json') {
-        const c = (marca.campanhas ?? []).find((x) => x.ativa);
-        return enviarJson(req, res, c ? { id: c.id, ativo: true } : { id: null, ativo: false }, { cache: 'public, max-age=60' });
-      }
+      if (p === '/feed/anuncio.json') return enviarJson(req, res, anuncioAtivo(marca), { cache: 'public, max-age=60' });
       let m = /^\/feed\/fotos\/(\d{4})\/([a-z]{2})\/(\d+)\.jpe?g$/.exec(p);
       if (m) return await fotos.tratar(req, res, m[1], m[2], m[3]);
 

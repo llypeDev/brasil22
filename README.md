@@ -76,6 +76,22 @@ existir; as variáveis estão em [.env.example](.env.example). Atrás de proxy r
 `CONFIAR_PROXY=1` para os limites por IP verem o cliente real. O controle do relógio da simulação
 (`/api/simulacao/relogio`) é recusado em produção.
 
+### Vercel
+
+O `vercel.json` publica o painel na Vercel sem o servidor Node. O build (`npm run build:vercel`)
+copia o feed oficial de `dados/publicado/oficial/` para `dist/feed/oficial/`: os dados saem como
+arquivos estáticos da CDN, nos mesmos caminhos do servidor, sem função e sem custo por acesso.
+
+| Recurso | Na Vercel |
+|---|---|
+| Dados oficiais, mapa, cargos, 2º turno, exterior, linha do tempo | Arquivos estáticos (`dist/feed/`) |
+| Fotos das candidaturas | Reescrita para o TSE (`/feed/fotos/*`) |
+| Simulação e cenários de teste, `/api/saude` | Função `api/servidor.mjs` (o próprio `server/app.mjs`), com o relógio da simulação ancorado no horário real (`SIM_ANCORA=0`) |
+| Presença ("pessoas agora") | Não existe: a aba para de enviar e o número não aparece |
+| Pedidos de acesso e de anúncio | Não existe: o formulário avisa que o envio está indisponível. Exige um banco persistente, que a função não tem |
+
+Dados novos (`npm run dados:tse:normalizar`) só aparecem depois de um novo deploy.
+
 ## Verificação
 
 ```bash
