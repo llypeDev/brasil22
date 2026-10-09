@@ -1,7 +1,7 @@
 // Coletor dos arquivos públicos de resultados do TSE (resultados.tse.jus.br).
 //
 // Baixa, com concorrência limitada e cache em disco, os arquivos "-u.json" de cada
-// abrangência (Brasil, UF, município, exterior) para os cargos do 1º turno de 2026.
+// abrangência (Brasil, UF, município, exterior) para o turno pedido de 2026.
 // Os arquivos brutos ficam em dados-brutos/tse/, espelhando o caminho oficial, e são
 // a entrada de scripts/tse/normalizar.mjs. Nada aqui é publicado diretamente.
 //
@@ -10,6 +10,8 @@
 import { mkdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { eleicaoDoCargo } from '../../server/lib/tse.mjs';
+import { UFS_GOVERNADOR } from '../../server/segundo-turno.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DESTINO = join(RAIZ, 'dados-brutos', 'tse');
@@ -21,7 +23,10 @@ const args = Object.fromEntries(process.argv.slice(2).map((a) => {
   const [k, v] = a.replace(/^--/, '').split('=');
   return [k, v ?? true];
 }));
-const CARGOS = String(args.cargos ?? '1,3,5,6,7,8').split(',').map(Number);
+const TURNO = Number(args.turno ?? 1);
+if (![1, 2].includes(TURNO)) throw new Error('Use --turno=1 ou --turno=2.');
+const CARGOS = String(args.cargos ?? (TURNO === 2 ? '1,3' : '1,3,5,6,7,8')).split(',').map(Number);
+if (TURNO === 2 && CARGOS.some((c) => ![1, 3].includes(c))) throw new Error('O 2º turno só tem presidente e governador.');
 const CONCORRENCIA = Number(args.concorrencia ?? 8);
 const FORCAR = !!args.forcar;
 const ZONAS = !!args.zonas;
@@ -35,7 +40,7 @@ async function existe(p) {
 
 async function baixar(url, { obrigatorio = true } = {}) {
   const caminho = join(DESTINO, url.replace(`${BASE}/`, ''));
-  if (!FORCAR && (await existe(caminho))) return { caminho, cache: true };
+  if (!FORCAR && url !== CONFIG && (await existe(caminho))) return { caminho, cache: true };
   let ultimoErro;
   for (let tentativa = 1; tentativa <= 4; tentativa++) {
     try {
@@ -93,16 +98,6 @@ async function emLote(itens, tarefa, rotulo) {
   return { feitos, falhas, erros };
 }
 
-function eleicaoDoCargo(config, cargo) {
-  for (const p of config.pl ?? []) {
-    if (p.c !== 'ele2026') continue;
-    for (const e of p.e ?? []) {
-      if (Number(e.t) !== 1) continue;
-      if ((e.abr ?? []).some((a) => (a.cp ?? []).some((c) => Number(c.cd) === cargo))) return { cd: String(e.cd), pleito: String(p.cd) };
-    }
-  }
-  return null;
-}
 
 async function main() {
   console.log(`Destino: ${DESTINO}`);
@@ -113,8 +108,8 @@ async function main() {
   const relatorio = { iniciadoEm: new Date().toISOString(), cargos: {} };
   const catalogos = {};
   for (const cargo of CARGOS) {
-    const e = eleicaoDoCargo(config, cargo);
-    if (!e) { console.warn(`Cargo ${cargo} sem eleição no 1º turno de 2026.`); continue; }
+    const e = eleicaoDoCargo(config, cargo, TURNO);
+    if (!e) throw new Error(`Cargo ${cargo} sem eleição publicada no ${TURNO}º turno de 2026.`);
     const ele = e.cd;
     const elePad = pad(ele, 6);
     if (!catalogos[ele]) {
@@ -130,6 +125,8 @@ async function main() {
     const urls = [];
     if (cargo === 1) urls.push(nome('br', ''));
     for (const uf of ufs) {
+      if (uf === 'br') continue;
+      if (TURNO === 2 && cargo === 3 && !UFS_GOVERNADOR.includes(uf.toUpperCase())) continue;
       if (cargo === 7 && uf === 'df') continue; // DF elege deputados distritais (cargo 8)
       if (cargo === 8 && uf !== 'df') continue;
       if (uf === 'zz' && cargo !== 1) continue;
@@ -139,6 +136,7 @@ async function main() {
     if ([1, 3, 5].includes(cargo)) {
       for (const a of cat.abr) {
         const uf = a.cd.toLowerCase();
+        if (TURNO === 2 && cargo === 3 && !UFS_GOVERNADOR.includes(uf.toUpperCase())) continue;
         if (uf === 'zz' && cargo !== 1) continue;
         for (const m of a.mu) urls.push(nome(uf, m.cd));
       }

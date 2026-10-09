@@ -5,6 +5,13 @@
 import { test, expect, type Page } from '@playwright/test';
 import { DatabaseSync } from 'node:sqlite';
 import { ARQUIVO_PEDIDOS } from './ambiente';
+import { painelSegundoTurno, resultadoSegundoTurno } from '../fixtures/segundo-turno';
+
+// As jornadas nunca dependem da publicação futura do TSE ou da disponibilidade da rede.
+test.beforeEach(async ({ page }) => {
+  const p = painelSegundoTurno();
+  await page.route('**/feed/oficial-2t/painel.json', (rota) => rota.fulfill({ json: { ...p, agora: null, aguardando: true } }));
+});
 
 async function abrir(page: Page, caminho: string) {
   await page.goto(caminho);
@@ -371,4 +378,48 @@ test('T16 · sem fragmento abre o 2º turno; dele se vai ao 1º turno e se volta
   await page.keyboard.press('2');
   await expect(page).toHaveURL(/#governadores$/);
   await expect(abaCargo(page, 'Governadores')).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('T17 · apuração do 2º turno atualiza, consulta lugares e preserva o painel completo do 1º', async ({ page }) => {
+  await page.clock.install();
+  let final = false;
+  let falha = false;
+  await page.route('**/feed/oficial-2t/painel.json', (rota) => falha ? rota.fulfill({ status: 503, json: { erro: 'TSE indisponível' } }) : rota.fulfill({ json: painelSegundoTurno(final) }));
+  await page.route('**/feed/oficial-2t/cadastro/**', (rota) => rota.fulfill({ json: { versao: 1, turno: 2, municipios: [{ tse: '41238', zonas: [26, 27] }] } }));
+  await page.route('**/feed/oficial-2t/resultados/**', (rota) => rota.fulfill({ json: { versao: 1, turno: 2, resultado: resultadoSegundoTurno(final), candidatos: painelSegundoTurno(final).catalogo.presidente } }));
+  await abrir(page, '/?semAnuncio#2turno');
+  await expect(page.locator('#p2t-titulo')).toHaveText('Acompanhe a apuração do 2º turno');
+  const nacional = page.getByRole('region', { name: 'Presidente · Brasil', exact: true });
+  await expect(nacional).toContainText('50,00% das seções');
+  await expect(nacional).toContainText('57,14%');
+  await expect(nacional).not.toContainText('eleito(a)');
+  await expect(page.locator('.p2t-gov > li')).toHaveCount(7);
+  await page.getByRole('button', { name: 'Ver presidente em Minas Gerais no 2º turno' }).click();
+  await page.getByLabel('Município', { exact: true }).selectOption('41238');
+  await expect(page.getByRole('region', { name: 'Presidente · Belo Horizonte', exact: true })).toContainText('350');
+  await page.getByLabel('Zona eleitoral', { exact: true }).selectOption('26');
+  await expect(page.getByRole('region', { name: 'Presidente · Belo Horizonte · Zona 26', exact: true })).toContainText('200 votos');
+  await page.getByRole('button', { name: 'Ver votos do exterior no 2º turno' }).click();
+  await expect(page.getByLabel('Estado ou exterior')).toHaveValue('ZZ');
+  await expect(page.getByRole('region', { name: 'Presidente · Exterior', exact: true })).toContainText('150 votos');
+  const turnos = page.getByRole('group', { name: 'Turno' });
+  await turnos.getByRole('button', { name: '1º turno' }).click();
+  await expect(page).toHaveURL(/#presidente$/);
+  await expect(page.locator('#manchete-pres')).toContainText('vão ao 2º turno');
+  await expect(abaCargo(page, 'Deputados')).toBeVisible();
+  await turnos.getByRole('button', { name: '2º turno' }).click();
+  await expect(page.locator('#p2t-titulo')).toHaveText('Acompanhe a apuração do 2º turno');
+  final = true;
+  await page.clock.fastForward(15_100);
+  await expect(page.locator('#p2t-titulo')).toHaveText('Lula eleito presidente segundo o TSE');
+  await expect(nacional).toContainText('100,00% das seções');
+  await expect(nacional).toContainText('eleito(a) · TSE');
+  falha = true;
+  await page.clock.fastForward(15_100);
+  await expect(page.getByRole('alert').filter({ hasText: 'TSE indisponível' })).toBeVisible();
+  await expect(nacional).toContainText('100,00% das seções');
+  falha = false; final = false; // um lote mais antigo também não pode substituir o final
+  await page.clock.fastForward(15_100);
+  await expect(page.getByRole('alert').filter({ hasText: 'Lote anterior' })).toBeVisible();
+  await expect(nacional).toContainText('100,00% das seções');
 });

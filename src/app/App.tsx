@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useEstado } from './store';
 import { iniciarUrl, lerModoDaUrl, definirValidadores } from './url';
 import { iniciarVivo } from '../data/vivo';
+import { usarVivoSegundoTurno } from '../data/vivo-segundo-turno';
 import { obterGeoBrasil, useGeoBrasil } from './dados';
 import { calcularLayout, useAltura, useViewport } from './layout';
 import { Faixas } from '../features/comercial/Faixas';
@@ -22,8 +23,9 @@ export function App() {
   const nav = useEstado((s) => s.nav);
   const modo = useEstado((s) => s.modo);
   const segundoTurno = nav.turno === 2 && !tv;
+  usarVivoSegundoTurno(segundoTurno && modo === 'oficial');
   const carregandoGeo = !useGeoBrasil().dados;
-  const carregando2t = useEstado((s) => !s.agoraVivo || !s.catalogo);
+  const carregando2t = useEstado((s) => s.modo === 'oficial' && s.painelSegundoTurno?.agora ? false : !s.agoraVivo || !s.catalogo);
 
   // inicialização: modo de dados, URL e acompanhamento ao vivo
   useEffect(() => {
@@ -67,7 +69,7 @@ export function App() {
   }, [nav.turno, nav.uf, nav.zz]);
 
   const carregandoMapa = useMapa((s) => s.carregando);
-  // a página do 2º turno não tem mapa: está pronta quando o resultado do 1º turno chega
+  // O lote do 2º turno basta; antes da divulgação, usa a referência do 1º turno.
   const carregando = segundoTurno ? carregando2t : carregandoGeo || carregandoMapa;
 
   return (

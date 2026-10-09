@@ -10,8 +10,11 @@ import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CARGOS, ErroDeContrato, compactar, eleito, lerResultado, minutosDaEleicao, nomeDeExibicao, situacaoDaDisputa } from '../../server/lib/tse.mjs';
+import { publicarSegundoTurno } from './publicar-segundo-turno.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const TURNO = Number(process.argv.find((a) => a.startsWith('--turno='))?.split('=')[1] ?? 1);
+if (![1, 2].includes(TURNO)) throw new Error('Use --turno=1 ou --turno=2.');
 const BRUTOS = join(RAIZ, 'dados-brutos', 'tse', 'oficial', 'ele2026');
 const REFERENCIA = join(RAIZ, '..', 'referencia-seuimposto', 'feed');
 const DESTINO = join(RAIZ, 'dados', 'publicado', 'oficial');
@@ -348,4 +351,4 @@ async function main() {
   console.log(`Publicado em ${DESTINO} (${((Date.now() - inicio) / 1000).toFixed(1)}s) · ${avisos.length} avisos · zonas ${nZonas} em ${municipiosComZonas.length} municípios`);
 }
 
-main().catch((e) => { console.error(e instanceof ErroDeContrato ? `Contrato: ${e.message}` : e); process.exit(1); });
+(TURNO === 2 ? publicarSegundoTurno(RAIZ) : main()).catch((e) => { console.error(e instanceof ErroDeContrato ? `Contrato: ${e.message}` : e); process.exit(1); });

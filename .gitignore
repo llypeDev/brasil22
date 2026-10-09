@@ -12,6 +12,8 @@ dados/privado/
 
 # snapshots próprios arquivados pelo coletor ao vivo (grandes; ficam no servidor)
 dados/arquivo-oficial/
+dados/arquivo-oficial-2t/
+dados/publicado/oficial-2t/
 
 # testes de ponta a ponta
 test-results/

@@ -115,9 +115,8 @@ arquiva o snapshot publicado atual; roda o normalizador. Recuo exponencial em 42
 Limites conhecidos, a resolver antes de uma divulgação real:
 
 - **Não foi exercido durante uma divulgação.** A publicação foi testada com o final do 1º turno.
-- **2º turno (25/10/2026):** `lerResultado` aceita apenas turno 1 e os códigos de eleição 6257
-  e 6259. O 2º turno terá códigos próprios no `ele-c.json` do TSE e precisa de ajuste no
-  coletor, no normalizador (apenas presidente e governadores) e nos textos da interface.
+- **2º turno (25/10/2026):** integração implementada, aguardando publicação de eleições
+  `t=2` e resultados reais pelo TSE. A conferência final exige a divulgação oficial.
 - Coleta municipal completa de um cargo a cada mudança: suficiente para 30 s, mas gera tráfego;
   preferir rebaixar só as UFs alteradas se o TSE publicar com frequência maior.
 
@@ -139,3 +138,43 @@ versionados; os brutos (`dados-brutos/`, ~430 MB) não.
 `config/marca.json`: título, autoria, redes, faixa institucional, convite, "anuncie aqui" e
 campanhas (`id`, cores, textos da faixa/card/modal, `destino` — URL externa ou `null` para abrir o
 formulário de anúncio). A campanha padrão é de demonstração e está identificada como tal.
+
+## Apuração do 2º turno — opção 2 de publicação
+
+A função `api/segundo-turno.mjs` e o servidor local compartilham `server/segundo-turno.mjs`.
+A interface só consulta o servidor próprio. A função normaliza os arquivos públicos `-u.json`
+do TSE por abrangência, sem consultas de cadastro pessoal. Valida fase, eleição, turno,
+abrangência, contagens e geração; o status eleitoral vem das situações oficiais das candidaturas.
+
+| Rota | Conteúdo |
+|---|---|
+| `/feed/oficial-2t/painel.json` | manifesto, catálogo e `Agora` de um lote; antes da divulgação, `agora: null`, `aguardando: true` |
+| `/feed/oficial-2t/resultados/presidente/br.json` | resultado nacional e candidaturas |
+| `/feed/oficial-2t/resultados/{presidente,governador}/{uf}.json` | resultado da UF; `zz` para presidente no exterior |
+| `/feed/oficial-2t/resultados/{cargo}/{uf}/{tse}.json` | município ou cidade do exterior, confirmado no cadastro do TSE |
+| `/feed/oficial-2t/resultados/presidente/{uf}/{tse}/z{zona}.json` | zona eleitoral, confirmada no cadastro do TSE |
+| `/feed/oficial-2t/cadastro/{cargo}/{uf}.json` | somente códigos municipais e números das zonas; nomes vêm da geografia local |
+
+Cache de sucesso/ausência: `public, max-age=0, s-maxage=15, stale-while-revalidate=15`.
+A CDN guarda as respostas por 15 s e revalida em segundo plano por até outros 15 s.
+Erros do TSE/contrato retornam 503, `no-store` e `Retry-After`; o cliente preserva o último
+lote válido. A interface consulta a cada 15 s, com recuo em falhas até 60 s. Requisições
+iguais em voo são compartilhadas e o cache em memória tem limite de 512 arquivos por instância.
+O limite é por instância/região da CDN; não é uma garantia global de uma chamada ao TSE.
+
+Fonte dos códigos: [configuração oficial do TSE](https://resultados.tse.jus.br/oficial/comum/config/ele-c.json).
+Em 09/10/2026, `cdt2` indica 6258/6260, mas não há entradas `t=2`: o feed aguarda sem
+fixar códigos previstos nem confundir os resultados do 1º turno com os do 2º.
+Cabeçalhos: [documentação da Vercel](https://vercel.com/docs/caching/cache-control-headers).
+
+Os scripts continuam disponíveis para coleta/publicação local:
+
+```bash
+npm run dados:tse:coletar -- --turno=2 --zonas --forcar
+npm run dados:tse:normalizar -- --turno=2
+npm run coletor -- --turno=2
+```
+
+Geram `dados/publicado/oficial-2t/`, com minutos desde 00:00 de 25/10 e arquivo/estado
+separados do 1º turno. A publicação escolhida na Vercel usa a função, e não esses arquivos.
+Não há Senado, deputados nem série histórica de referência no feed do 2º turno.

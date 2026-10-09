@@ -2,7 +2,7 @@
 // interface temporária. Um lote novo de dados nunca mexe em navegação nem em interface.
 
 import { create } from 'zustand';
-import type { Agora, Catalogo, Manifesto, Modo } from '../data/contratos';
+import type { Agora, Catalogo, Manifesto, Modo, PainelSegundoTurno } from '../data/contratos';
 import { ESTADO_INICIAL, parseHash, type Camada, type Cargo, type EstadoUrl } from './hash';
 import { turnoPadrao } from './modo';
 
@@ -25,6 +25,9 @@ export interface Estado {
   erroConexao: string | null;
   avisoDados: string | null;
   proximaTentativa: number | null;
+  painelSegundoTurno: PainelSegundoTurno | null;
+  conexaoSegundoTurno: Conexao;
+  erroSegundoTurno: string | null;
 
   busca: boolean;
   perfil: PerfilRef | null;
@@ -83,6 +86,9 @@ export const useEstado = create<Estado>((set, get) => ({
   erroConexao: null,
   avisoDados: null,
   proximaTentativa: null,
+  painelSegundoTurno: null,
+  conexaoSegundoTurno: 'conectando',
+  erroSegundoTurno: null,
 
   busca: false,
   perfil: null,

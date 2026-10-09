@@ -26,8 +26,8 @@ municipal, cargos, exterior, linha do tempo e modo TV. Desde a PR #2, o endereç
 npm install
 npm run dev            # http://127.0.0.1:5180, com feeds e APIs do servidor próprio
 npm run typecheck
-npm test               # 45 testes (Vitest)
-npm run test:e2e       # jornadas T01–T16 (Playwright); Chromium via E2E_CHROMIUM=/caminho/do/chrome
+npm test               # 53 testes (Vitest)
+npm run test:e2e       # jornadas T01–T17 (Playwright); Chromium via E2E_CHROMIUM=/caminho/do/chrome
 npm run build          # build para o servidor Node (npm start)
 npm run build:vercel   # build + feed oficial estático em dist/feed (o que a Vercel roda)
 ```
@@ -47,76 +47,50 @@ npm run build:vercel   # build + feed oficial estático em dist/feed (o que a Ve
 
 ## 1. Apuração do 2º turno — urgente (votação em 25/10/2026)
 
-Hoje a página do 2º turno mostra só o resultado do 1º turno (finalistas, onde cada um venceu, as 7
-disputas de governador) e uma contagem regressiva. **Nada do 2º turno é coletado.** Depois de
-25/10, a página avisa que os resultados não estão nela (`contagem.encerrada` em
-`src/features/segundo-turno/SegundoTurno.tsx`).
+~~Coletar e exibir a apuração do 2º turno.~~ Implementação preparada em 09/10/2026.
 
-**Escopo do 2º turno:** presidente (Lula × Flávio Bolsonaro; Brasil, UFs, municípios, zonas e
-exterior) e governador em **7 UFs**: RJ, AM, ES, RN, DF, TO e AC. Não há Senado nem deputados.
+**Decisão do responsável:** opção **2**, função na Vercel com cache na CDN. O 1º turno
+continua estático, no feed próprio, e o endereço principal continua abrindo `#2turno`.
 
-### 1.1 Coleta e normalização (TSE)
+### 1.1 Coleta e normalização — implementadas
 
-Os códigos de eleição do 2º turno saem do `ele-c.json` do TSE
-(`https://resultados.tse.jus.br/oficial/comum/config/ele-c.json`), nas eleições com `t = 2`. Pelo
-padrão de 2022 (544/545 e 546/547), devem ser **6258** (federal) e **6260** (estadual); confirme
-antes de fixar qualquer valor. Pontos do código presos ao 1º turno:
+- `lerResultado` valida o turno solicitado (1 por padrão, 2 explicitamente).
+- Códigos obtidos de `ele-c.json`, somente de eleições com `t=2`. Em 09/10 a configuração
+  ainda só contém `t=1`, com `cdt2=6258/6260`: esses valores previstos **não** habilitam resultados.
+- `coletar.mjs`, `normalizar.mjs` e `coletor-ao-vivo.mjs` aceitam `--turno=2`; restringem a coleta
+  a presidente e governador nas sete UFs (RJ, AM, ES, RN, DF, TO, AC), com diretório de
+  publicação/arquivo/estado separado. Os minutos do 2º turno começam em 25/10.
+- `server/segundo-turno.mjs` compartilha a normalização entre função, servidor local e publicação
+  em disco. Só arquivos públicos de divulgação, com contagens/abrangências/turno validados.
+- Fotos recebem o código confirmado no manifesto; o proxy local confirma eleições novas.
 
-| Arquivo | O que muda |
-|---|---|
-| `server/lib/tse.mjs:56` | `lerResultado` recusa turno ≠ 1 (`'Turno inesperado.'`) |
-| `server/lib/tse.mjs:27` | `minutosDaEleicao` usa 04/10 como padrão; no 2º turno, passar 25/10 |
-| `scripts/tse/coletar.mjs` (`eleicaoDoCargo`) | filtra `t === 1`; precisa aceitar o turno pedido |
-| `scripts/tse/coletor-ao-vivo.mjs:25` | `CARGOS` fixa 6257/6259 e inclui Senado e deputados |
-| `scripts/tse/normalizar.mjs:18, 301, 306` | `ELE`, `turno: 1` e `eleicao` do manifesto fixos |
-| `src/components/Retrato.tsx:11` e `server/fotos.mjs:10` | fotos por código de eleição (6257/6259) |
+### 1.2 Interface — implementada
 
-Recomendação: parametrizar por turno (`--turno=2`) em vez de duplicar os scripts, e publicar o 2º
-turno num **diretório próprio** (ex.: `dados/publicado/oficial-2t/`, mesmo contrato de
-`src/data/contratos.ts`, com `turno: 2`). O feed do 1º turno fica intacto, porque o seletor
-"1º turno" continua mostrando o painel completo dele.
+- Feed `/feed/oficial-2t/` e estado próprios; manifesto, catálogo e contagens no mesmo lote.
+- Votos, percentuais, seções e situação oficial de presidente e dos sete governos.
+- Grade de UFs (opção prevista no escopo), com consultas de municípios, zonas e exterior.
+  A grade mostra liderança, sem previsão de vitória; somente `Eleito` do TSE autoriza o selo.
+- Consulta a cada 15 s; pausa em aba oculta, retoma ao voltar/reconectar e mantém o último
+  lote válido em falhas, respostas inválidas ou regressão de sequência.
+- Antes da divulgação, a referência do 1º turno fica explicitamente identificada.
 
-### 1.2 Interface
+### 1.3 Publicação — opção 2 implementada
 
-- `src/data/provedor.ts` (`baseDoModo`, `urlDe`) e `src/data/vivo.ts` (`iniciarVivo`) leem um
-  único feed. O 2º turno precisa do seu, sem tirar o do 1º: por exemplo, a base do feed por turno
-  e um estado separado no `src/app/store.ts` (hoje só existe `agoraVivo`, que é do 1º turno).
-  `src/data/validar.ts` já aceita `turno: 2`.
-- Página `src/features/segundo-turno/`: com dados do 2º turno, mostrar a apuração ao vivo
-  (percentuais, votos, seções apuradas, quem venceu) no lugar dos números do 1º, e os 7 governos
-  ao vivo. Os números do 1º turno podem ficar como comparação.
-- Mapa do 2º turno (presidente e os 7 estados): reaproveitar o motor de `src/map/` se couber no
-  prazo; senão, a grade de UFs da página já serve de mapa simplificado.
-- Textos: título, linha fina e aviso de "Votação encerrada" mudam quando houver dados.
+`api/segundo-turno.mjs` consulta o TSE sob demanda, com
+`Cache-Control: public, max-age=0, s-maxage=15, stale-while-revalidate=15`, cache limitado por
+instância e deduplicação de requisições. `vercel.json` encaminha apenas o feed do 2º turno a
+essa função. Não precisa de novo deploy a cada lote. Detalhes em [INTEGRACAO](INTEGRACAO.md).
 
-### 1.3 Publicação durante a noite da apuração
+### 1.4 Testes e conferência
 
-Na Vercel o feed é **estático**: dado novo só aparece com novo deploy (1–2 min cada). Isso não
-serve para atualizar a cada 15–60 s. **Decisão do responsável**, escolher uma:
-
-1. **Servidor Node próprio** (VPS, Render, Fly, Railway): `npm run coletor` e `npm start` na
-   mesma máquina. É o caminho já implementado (ver INTEGRACAO.md, "Coletor ao vivo"), mas nunca
-   foi exercido numa divulgação real. O domínio passa a apontar para esse servidor.
-2. **Função na Vercel que lê o TSE sob demanda** e devolve o feed normalizado com
-   `Cache-Control: s-maxage=15, stale-while-revalidate`. A CDN segura a audiência e o TSE recebe
-   no máximo uma consulta a cada 15 s por arquivo. Exige portar a normalização do 2º turno para
-   rodar por requisição.
-3. **Coletor fora da Vercel gravando o feed num armazenamento** (Vercel Blob, R2). O cliente lê
-   de lá: ajustar CSP (`connect-src`) e cache.
-
-Os limites do plano Hobby da Vercel (requisições e banda) pesam numa noite de eleição: avaliar o
-plano antes.
-
-### 1.4 Testes
-
-- Unitários do adaptador com um JSON real do 2º turno, assim que o TSE publicar a configuração.
-- Simulação do 2º turno (hoje `server/simulacao.mjs` só conhece o 1º) ou dados de teste, para
-  ver a apuração andando.
-- E2E nova (T17): página do 2º turno com dados, troca para o 1º turno e volta.
-
-**Pronto quando:** em 25/10, a partir da divulgação, a página do 2º turno mostra a apuração com
-seções apuradas, atualiza sozinha em até 60 s, o resultado final confere com o TSE, o seletor
-continua levando ao 1º turno completo e os testes passam.
+- Amostras artificiais isoladas em `tests/fixtures/segundo-turno.ts`: divulgação ausente,
+  parcial, final, municípios, zonas, cache, erros e rejeição de outro turno.
+- T17: apuração, consulta de lugares, 2º → 1º → 2º, atualização, falha e lote regressivo.
+- Validação automática com Node 22 e Chromium no GitHub Actions; executar os três comandos
+  da seção 0 antes da PR.
+- **Ainda depende da publicação pelo TSE:** adicionar um JSON real de 2026/2º turno ao teste
+  do adaptador e conferir os totais finais e a cadência durante a divulgação de 25/10.
+  Não afirmar que a integração foi exercida com resultados reais antes dessa divulgação.
 
 ## 2. Pedidos de acesso e de anúncio na Vercel
 
@@ -166,7 +140,7 @@ remover o recurso. **Decisão do responsável.**
 
 ## Decisões que dependem do responsável
 
-1. Hospedagem da noite do 2º turno (item 1.3).
+1. ~~Hospedagem da noite do 2º turno~~: escolhida a opção 2 (função Vercel com cache).
 2. Destino dos pedidos de acesso e anúncio (item 2).
 3. Manter ou remover a presença (item 3).
 4. Domínio público e proteção de deploy na Vercel (item 4).

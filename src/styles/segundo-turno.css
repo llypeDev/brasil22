@@ -87,6 +87,19 @@
 .p2t-cargo-acao { font: 600 var(--t-label)/1 var(--sans); color: var(--verde); }
 .p2t-metricas { margin-top: 16px; }
 .p2t-fonte { font-size: var(--t-micro); line-height: 1.5; color: var(--fg-4); max-width: 820px; }
+.p2t-secoes { margin: 4px 0 16px; font-weight: 600; color: var(--verde-escuro); }
+.p2t-resultados { display: grid; gap: 16px; margin-bottom: 16px; }
+.p2t-resultados .nome { display: grid; gap: 4px; min-width: 0; }
+.p2t-resultados .nome b { font-size: var(--t-name); }
+.p2t-resultados .nome small { color: var(--fg-3); white-space: normal; }
+.p2t-resultados .p2t-situacao { color: var(--verde-escuro); font-weight: 700; }
+.p2t-resultado .pares { margin-top: 12px; }
+.p2t-resultado.compacto .nome b { font-size: var(--t-body); }
+.p2t-detalhar { margin: 10px 4px; font-size: var(--t-label); }
+.p2t-filtros { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.p2t-filtros label { display: flex; flex: 1 1 180px; flex-direction: column; gap: 6px; font-size: var(--t-label); font-weight: 600; min-width: 0; }
+.p2t-filtros select { width: 100%; min-height: 40px; border: 1px solid var(--line-2); border-radius: 8px; padding: 8px; color: var(--fg); background: var(--bg); font: inherit; }
+.p2t-erro-detalhe { margin-bottom: 12px; font-size: var(--t-body); }
 
 /* tablet, paisagem e celular: cabeçalho do celular em fluxo, uma coluna */
 .pagina-2t:not(.v2t-desktop) .p2t-escala { padding: 0 12px; }

@@ -33,7 +33,7 @@ export interface Resultado {
 export interface Agora {
   versao: 1;
   seq: number;
-  /** minutos desde 00:00 de 04/10/2026 (horário de Brasília); pode passar de 1.440 */
+  /** minutos desde 00:00 do dia do turno (horário de Brasília); pode passar de 1.440 */
   t: number;
   turno: number;
   modo?: string;
@@ -43,6 +43,16 @@ export interface Agora {
   governador: { uf: Record<string, Resultado> };
   senador: { uf: Record<string, Resultado> };
 }
+
+/** Manifesto, catálogo e contagens do mesmo lote; o 1º turno mantém seu próprio estado. */
+export interface PainelSegundoTurno {
+  versao: 1;
+  manifesto: Manifesto;
+  catalogo: Catalogo;
+  agora: Agora | null;
+  aguardando: boolean;
+}
+export interface DetalheSegundoTurno { versao: 1; turno: 2; resultado: Resultado; candidatos: Candidato[] }
 
 export interface Candidato {
   n: string;
