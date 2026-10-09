@@ -9,6 +9,10 @@ finalizar a construção. **Cores: seguir as imagens de referência 1 (Statista)
 claro — em vez do tema escuro do plano. A imagem 3 serviu de referência para rótulos e chamadas
 sobre o mapa.
 
+Depois (PR #1), o responsável pediu um visual mais patriótico: **verde e amarelo**, com a bandeira
+do Brasil, no lugar do azul e vermelho das referências. Em seguida vieram a página do 2º turno
+(PR #2) e a publicação na Vercel (PR #3).
+
 ## Decisões
 
 1. Projeto próprio: React 19 + TypeScript + Vite 7, servidor Node sem dependências de execução.
@@ -22,16 +26,19 @@ sobre o mapa.
    locais de votação só coordenadas e contagens.
 6. Projeção do Brasil: Mercator pré-projetada em 10.000 unidades; mundo: Natural Earth.
 
-## Paleta (amostrada)
+## Paleta
 
-Azul `#1E57C9` · vermelho `#D82121` · cinza neutro `#A8A8A8` · fundo `#F4F4F4` · faixa `#ECECEC`
-· grade `#D4D4D4` · texto `#111` / `#505050`.
+Verde `#007A3D` · verde-escuro `#004D2B` · amarelo `#FFDF00` · fundo `#F2F6EF` · texto `#17291D`
+(`src/styles/tokens.css`). PL em verde `#008C45` e PT em amarelo `#F2C500`
+(`src/data/partidos.ts`). A paleta amostrada das referências (azul `#1E57C9`, vermelho `#D82121`)
+foi substituída na PR #1.
 
-## Estado (08/10/2026)
+## Estado (09/10/2026)
 
-- R01–R24 e T01–T15: ver [CHECKLIST.md](CHECKLIST.md). Diferenças e dependências:
-  [DIFERENCAS.md](DIFERENCAS.md).
-- Verificação: `npm run typecheck`, `npm test` (34), `npm run build`, `npm run test:e2e`.
+- R01–R24 e T01–T16: ver [CHECKLIST.md](CHECKLIST.md). Diferenças e dependências:
+  [DIFERENCAS.md](DIFERENCAS.md). **O que falta fazer: [PENDENCIAS.md](PENDENCIAS.md).**
+- Verificação: `npm run typecheck`, `npm test` (45), `npm run build`, `npm run build:vercel`,
+  `npm run test:e2e`.
 - Neste ambiente, o Playwright roda com o Chromium headless já baixado:
   `E2E_CHROMIUM=%LOCALAPPDATA%/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-win64/chrome-headless-shell.exe`.
   O Chrome instalado (`E2E_CANAL=chrome`) é encerrado pela política da máquina.
@@ -39,11 +46,6 @@ Azul `#1E57C9` · vermelho `#D82121` · cinza neutro `#A8A8A8` · fundo `#F4F4F4
   entrega `resize` nem `ResizeObserver` e atrasa timers: para medir animações e layout nele,
   simular quadros (`requestAnimationFrame = cb => setTimeout(...)`) e disparar `resize`.
 
-## Próximos passos possíveis
+## Próximos passos
 
-1. 2º turno (25/10/2026): a navegação por turno e a página existem (`src/features/segundo-turno`,
-   `#2turno`); falta coletar a apuração — códigos de eleição novos, turno 2 no adaptador, um feed
-   próprio do turno 2 — e mostrá-la na página, mantendo o 1º turno acessível pelo seletor.
-2. Exercitar o coletor ao vivo numa divulgação real e passar a série da linha do tempo para o
-   arquivo próprio.
-3. Assets pendentes: bandeiras das UFs, imagem social, arte publicitária real.
+Em [PENDENCIAS.md](PENDENCIAS.md), por prioridade. O urgente é a apuração do 2º turno (25/10/2026).
