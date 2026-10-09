@@ -62,8 +62,8 @@ abrangências idênticas em votos, seções, comparecimento, brancos, nulos e si
 
 ## Verificação
 
-- Unitários: 34 testes (Vitest).
-- Ponta a ponta: jornadas T01–T15 e contratos da API (Playwright, `npm run test:e2e`), rodadas com
+- Unitários: 45 testes (Vitest).
+- Ponta a ponta: jornadas T01–T16 e contratos da API (Playwright, `npm run test:e2e`), rodadas com
   o Chromium headless do Playwright neste ambiente. O Chrome instalado (`E2E_CANAL=chrome`) é
   bloqueado aqui pela política da máquina, não pelo projeto.
 - Igualdade visual: implementação própria; as capturas em `docs/capturas/` servem para comparar

@@ -145,7 +145,7 @@ divulgação estão em [docs/INTEGRACAO.md](docs/INTEGRACAO.md). Fontes e licen�
 | `scripts` | coleta e normalização do TSE, geografia, zonas aproximadas, 2022, Senado, coletor ao vivo, capturas |
 | `config/marca.json` | título, autoria, redes, faixas e campanhas (padrões neutros de demonstração) |
 | `tests` | unitários (`tests/unit`) e ponta a ponta (`tests/e2e`) |
-| `docs` | checklist R01–R24/T01–T15, integração, diferenças restantes, assets, continuidade |
+| `docs` | pendências (o que falta fazer), checklist R01–R24/T01–T16, integração, diferenças restantes, assets, continuidade |
 
 ## Privacidade
 
