@@ -26,7 +26,7 @@ municipal, cargos, exterior, linha do tempo e modo TV. Desde a PR #2, o endereç
 npm install
 npm run dev            # http://127.0.0.1:5180, com feeds e APIs do servidor próprio
 npm run typecheck
-npm test               # 53 testes (Vitest)
+npm test               # 54 testes (Vitest)
 npm run test:e2e       # jornadas T01–T17 (Playwright); Chromium via E2E_CHROMIUM=/caminho/do/chrome
 npm run build          # build para o servidor Node (npm start)
 npm run build:vercel   # build + feed oficial estático em dist/feed (o que a Vercel roda)

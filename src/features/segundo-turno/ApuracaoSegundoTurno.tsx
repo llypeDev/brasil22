@@ -7,7 +7,7 @@ import { eleito, fracaoSecoes, linhas, rotuloSituacao } from '../../data/calculo
 import { horaIso, num, pctS } from '../../data/formato';
 import { partido, textoSobreCor } from '../../data/partidos';
 import { obterJson, urlDe } from '../../data/provedor';
-import { validarDetalheSegundoTurno } from '../../data/validar';
+import { validarDetalheSegundoTurno, validarGeracaoSegundoTurno } from '../../data/validar';
 import type { Candidato, DetalheSegundoTurno, PainelSegundoTurno, Resultado } from '../../data/contratos';
 
 const GOVERNOS = ['RJ', 'AM', 'ES', 'RN', 'DF', 'TO', 'AC'];
@@ -23,6 +23,7 @@ export function ApuracaoSegundoTurno({ painel }: { painel: PainelSegundoTurno })
   const [municipio, definirMunicipio] = useState('');
   const [zona, definirZona] = useState('');
   const [cadastro, definirCadastro] = useState<Cadastro | null>(null);
+  const [erroCadastro, definirErroCadastro] = useState<string | null>(null);
   const [detalhe, definirDetalhe] = useState<{ chave: string; dados: DetalheSegundoTurno } | null>(null);
   const [erroDetalhe, definirErroDetalhe] = useState<string | null>(null);
   const geo = useGeoBrasil().dados;
@@ -33,12 +34,24 @@ export function ApuracaoSegundoTurno({ painel }: { painel: PainelSegundoTurno })
 
   useEffect(() => {
     definirCadastro(null);
+    definirErroCadastro(null);
     if (uf === 'BR') return;
     const controle = new AbortController();
-    obterJson<Cadastro>(urlDe('oficial', `cadastro/${cargo}/${uf.toLowerCase()}.json`, null, 2), { signal: controle.signal })
-      .then((c) => { if (c.versao !== 1 || c.turno !== 2 || !Array.isArray(c.municipios)) throw new Error('Cadastro inválido.'); definirCadastro(c); })
-      .catch(() => undefined);
-    return () => controle.abort();
+    let tentativa: ReturnType<typeof setTimeout> | undefined;
+    async function consultar() {
+      try {
+        const c = await obterJson<Cadastro>(urlDe('oficial', `cadastro/${cargo}/${uf.toLowerCase()}.json`, null, 2), { signal: controle.signal });
+        if (controle.signal.aborted) return;
+        if (c.versao !== 1 || c.turno !== 2 || !Array.isArray(c.municipios)) throw new Error('Cadastro inválido.');
+        definirCadastro(c); definirErroCadastro(null);
+      } catch {
+        if (controle.signal.aborted) return;
+        definirErroCadastro('Cadastro municipal temporariamente indisponível. Nova tentativa em 15 segundos.');
+        tentativa = setTimeout(consultar, 15_000);
+      }
+    }
+    void consultar();
+    return () => { controle.abort(); if (tentativa) clearTimeout(tentativa); };
   }, [cargo, uf, painel.manifesto.eleicao.eleicoes.presidente, painel.manifesto.eleicao.eleicoes.estaduais]);
 
   useEffect(() => {
@@ -46,9 +59,17 @@ export function ApuracaoSegundoTurno({ painel }: { painel: PainelSegundoTurno })
     const controle = new AbortController();
     definirErroDetalhe(null);
     obterJson(urlDe('oficial', urlDetalhe, null, 2), { signal: controle.signal })
-      .then((d) => definirDetalhe({ chave: urlDetalhe, dados: validarDetalheSegundoTurno(d) }))
+      .then((d) => {
+        if (controle.signal.aborted) return;
+        const dados = validarDetalheSegundoTurno(d);
+        // A consulta selecionada também preserva sua geração, independentemente do lote BR.
+        validarGeracaoSegundoTurno(dados.resultado, detalhe?.chave === urlDetalhe ? detalhe.dados.resultado : undefined, 'Abrangência');
+        definirDetalhe({ chave: urlDetalhe, dados });
+      })
       .catch((e) => { if (!controle.signal.aborted) definirErroDetalhe((e as Error).message); });
     return () => controle.abort();
+    // O resultado anterior serve só à validação; recebê-lo não dispara outra requisição.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlDetalhe, painel]);
 
   const municipios = useMemo(() => (cadastro?.municipios ?? []).map((m) => {
@@ -106,6 +127,7 @@ export function ApuracaoSegundoTurno({ painel }: { painel: PainelSegundoTurno })
         {uf !== 'BR' && <label>{uf === 'ZZ' ? 'Cidade no exterior' : 'Município'}<select value={municipio} disabled={!cadastro} onChange={(e) => { definirMunicipio(e.target.value); definirZona(''); }}><option value="">{cadastro ? 'Todos' : 'Carregando cadastro…'}</option>{municipios.map((m) => <option key={m.tse} value={m.tse}>{m.nome}</option>)}</select></label>}
         {cargo === 'presidente' && municipio && zonas.length > 0 && <label>Zona eleitoral<select value={zona} onChange={(e) => definirZona(e.target.value)}><option value="">Todas</option>{zonas.map((z) => <option key={z} value={z}>Zona {z}</option>)}</select></label>}
       </div>
+      {erroCadastro && <p role="alert" className="p2t-erro-detalhe">{erroCadastro}</p>}
       {erroDetalhe && <p role="alert" className="p2t-erro-detalhe">{erroDetalhe}{r ? ' Mantido o último resultado válido desta abrangência.' : ''}</p>}
       <CardResultado titulo={tituloDetalhe} resultado={r} candidatos={candidatos} cargo={cargo} uf={uf} eleicao={painel.manifesto.eleicao.eleicoes[cargo === 'presidente' ? 'presidente' : 'estaduais']} />
     </section>

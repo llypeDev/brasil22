@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { useEstado } from '../app/store';
 import { ErroFeed, obterJson, urlDe } from './provedor';
-import { sequenciaAceita, validarPainelSegundoTurno } from './validar';
+import { validarAtualizacaoSegundoTurno, validarPainelSegundoTurno } from './validar';
 
 export function usarVivoSegundoTurno(ativo: boolean) {
   useEffect(() => {
@@ -20,7 +20,7 @@ export function usarVivoSegundoTurno(ativo: boolean) {
         const painel = validarPainelSegundoTurno(await obterJson(urlDe('oficial', 'painel.json', null, 2), { signal: controle.signal, tempoLimite: 55_000 }));
         if (parado) return;
         const anterior = useEstado.getState().painelSegundoTurno;
-        if (anterior?.agora && (!painel.agora || !sequenciaAceita(anterior.agora.seq, painel.agora.seq, 'oficial'))) throw new Error('Lote anterior ao exibido. Mantido o último dado válido.');
+        validarAtualizacaoSegundoTurno(painel, anterior);
         useEstado.getState().set({ painelSegundoTurno: painel, conexaoSegundoTurno: 'ao-vivo', erroSegundoTurno: null });
         falhas = 0;
         agendar(15_000);

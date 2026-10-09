@@ -65,6 +65,20 @@ export function validarDetalheSegundoTurno(bruto: unknown): DetalheSegundoTurno 
   return d;
 }
 
+/** Uma UF atrasada não pode regredir só porque outro arquivo elevou a sequência do lote. */
+export function validarGeracaoSegundoTurno(novo: Resultado | undefined, anterior: Resultado | undefined, onde: string) {
+  if (anterior?.geradoEm && (!novo?.geradoEm || Date.parse(novo.geradoEm) < Date.parse(anterior.geradoEm))) throw new ErroValidacao(`${onde}: resultado anterior ao exibido`);
+}
+
+export function validarAtualizacaoSegundoTurno(novo: PainelSegundoTurno, anterior: PainelSegundoTurno | null) {
+  if (!anterior?.agora) return novo;
+  if (!novo.agora || !sequenciaAceita(anterior.agora.seq, novo.agora.seq, 'oficial')) throw new ErroValidacao('Lote anterior ao exibido');
+  validarGeracaoSegundoTurno(novo.agora.presidente.br, anterior.agora.presidente.br, 'Presidente Brasil');
+  validarGeracaoSegundoTurno(novo.agora.presidente.zz, anterior.agora.presidente.zz, 'Presidente exterior');
+  for (const cargo of ['presidente', 'governador'] as const) for (const [uf, r] of Object.entries(anterior.agora[cargo].uf)) validarGeracaoSegundoTurno(novo.agora[cargo].uf[uf], r, `${cargo} ${uf}`);
+  return novo;
+}
+
 export function validarColunar<T extends Colunar>(bruto: unknown, onde = 'coleção'): T {
   const c = bruto as T;
   if (!c || !Array.isArray(c.tse) || !Array.isArray(c.candidatos) || !Array.isArray(c.votos)) throw new ErroValidacao(`${onde}: formato colunar inválido`);

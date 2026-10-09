@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { compactar, eleicaoDoCargo, lerResultado, minutosDaEleicao } from '../../server/lib/tse.mjs';
 // @ts-expect-error módulo do servidor sem tipos
 import { CONFIG_ELEICOES, criarFeedSegundoTurno, criarLeitorTse, caminhoResultado } from '../../server/segundo-turno.mjs';
-import { validarDetalheSegundoTurno, validarPainelSegundoTurno } from '../../src/data/validar';
+import { validarAtualizacaoSegundoTurno, validarDetalheSegundoTurno, validarPainelSegundoTurno } from '../../src/data/validar';
 import { brutoSegundoTurno, configSegundoTurno, GOVERNOS_TESTE, painelSegundoTurno } from '../fixtures/segundo-turno';
 import { baseDoModo } from '../../src/data/provedor';
 import { urlFoto } from '../../src/components/Retrato';
@@ -89,5 +89,15 @@ describe('publicação e contrato do 2º turno', () => {
     expect(baseDoModo('oficial', 2)).toBe('/feed/oficial-2t/');
     expect(urlFoto('presidente', null, '280001111111', '6258')).toBe('/feed/fotos/6258/br/280001111111.jpeg');
     expect(urlFoto('presidente', null, '280001111111')).toBe('/feed/fotos/6257/br/280001111111.jpeg');
+  });
+  it('arquivo de uma UF mais antigo ou ausente não é escondido por uma sequência maior', () => {
+    const anterior = painelSegundoTurno(true);
+    const novo = painelSegundoTurno(true);
+    novo.agora!.seq = 300;
+    novo.agora!.presidente.uf.MG = { ...novo.agora!.presidente.uf.MG, geradoEm: '2026-10-25T18:00:00-03:00' };
+    expect(() => validarAtualizacaoSegundoTurno(novo, anterior)).toThrow(/presidente MG/);
+    delete novo.agora!.presidente.uf.MG;
+    expect(() => validarAtualizacaoSegundoTurno(novo, anterior)).toThrow(/presidente MG/);
+    expect(validarAtualizacaoSegundoTurno(painelSegundoTurno(true), painelSegundoTurno())).toBeTruthy();
   });
 });

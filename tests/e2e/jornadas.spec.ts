@@ -389,7 +389,7 @@ test('T17 · apuração do 2º turno atualiza, consulta lugares e preserva o pai
   await page.route('**/feed/oficial-2t/resultados/**', (rota) => rota.fulfill({ json: { versao: 1, turno: 2, resultado: resultadoSegundoTurno(final), candidatos: painelSegundoTurno(final).catalogo.presidente } }));
   await abrir(page, '/?semAnuncio#2turno');
   await expect(page.locator('#p2t-titulo')).toHaveText('Acompanhe a apuração do 2º turno');
-  const nacional = page.getByRole('region', { name: 'Presidente · Brasil', exact: true });
+  const nacional = page.locator('.p2t-linha').getByRole('region', { name: 'Presidente · Brasil', exact: true });
   await expect(nacional).toContainText('50,00% das seções');
   await expect(nacional).toContainText('57,14%');
   await expect(nacional).not.toContainText('eleito(a)');
