@@ -1,6 +1,6 @@
 # Pendências — para quem for continuar
 
-Estado em 09/10/2026, depois das PRs #1 a #3. Escrito para outra IA (ou pessoa) assumir o trabalho
+Estado em 09/10/2026, depois das PRs #1 a #3 e #5. Escrito para outra IA (ou pessoa) assumir o trabalho
 sem o histórico da conversa. Ordem de prioridade: **1 é urgente** (tem data), o resto pode esperar.
 
 ## 0. Antes de começar
@@ -17,6 +17,8 @@ municipal, cargos, exterior, linha do tempo e modo TV. Desde a PR #2, o endereç
 - PR #2: página do 2º turno e navegação por turno (`src/features/segundo-turno/`, `#2turno`).
 - PR #3: publicação na Vercel. O feed oficial vira arquivos estáticos e a simulação roda numa
   função (ver README, seção Vercel).
+- PR #5: apuração do 2º turno com função Vercel, cache na CDN, consultas por lugar e
+  validação automática no GitHub Actions. Integrada à `main` e publicada em 09/10/2026.
 - Uma tarefa do Codex com a "opção de ver o 1º turno" nunca chegou ao GitHub. Ela já foi feita na
   PR #2: descarte-a.
 
@@ -88,6 +90,9 @@ essa função. Não precisa de novo deploy a cada lote. Detalhes em [INTEGRACAO]
 - T17: apuração, consulta de lugares, 2º → 1º → 2º, atualização, falha e lote regressivo.
 - Validação automática com Node 22 e Chromium no GitHub Actions; executar os três comandos
   da seção 0 antes da PR.
+- Publicação conferida em 09/10/2026: acesso sem login em
+  [brasiltse.vercel.app](https://brasiltse.vercel.app/), alternância 2º → 1º → 2º turno e
+  `/feed/oficial-2t/painel.json` com HTTP 200, `aguardando: true` e `agora: null`.
 - **Ainda depende da publicação pelo TSE:** adicionar um JSON real de 2026/2º turno ao teste
   do adaptador e conferir os totais finais e a cadência durante a divulgação de 25/10.
   Não afirmar que a integração foi exercida com resultados reais antes dessa divulgação.
@@ -114,9 +119,10 @@ remover o recurso. **Decisão do responsável.**
 
 ## 4. Vercel e publicação
 
-- **Proteção de deploy:** todos os endereços `*.vercel.app` do projeto pedem login da Vercel.
-  Para o público ver, configurar um domínio de produção ou ajustar *Settings → Deployment
-  Protection*. Feito pelo responsável, no painel da Vercel.
+- ~~Liberar o endereço de produção para o público.~~ Verificado sem login em 09/10/2026:
+  [brasiltse.vercel.app](https://brasiltse.vercel.app/). O endereço indicado pelo repositório,
+  `brasil22-nine.vercel.app`, redireciona para ele. O preview da PR #5 pede login da Vercel;
+  use o endereço de produção para compartilhar o painel.
 - ~~Criar CI no GitHub Actions.~~ Implementado em `.github/workflows/validar.yml`, com
   Node 22, `npm run typecheck`, 54 testes unitários, 20 testes E2E com Chromium e
   `npm run build:vercel`. O fluxo valida a branch de implementação do 2º turno e as PRs
@@ -144,6 +150,7 @@ remover o recurso. **Decisão do responsável.**
 1. ~~Hospedagem da noite do 2º turno~~: escolhida a opção 2 (função Vercel com cache).
 2. Destino dos pedidos de acesso e anúncio (item 2).
 3. Manter ou remover a presença (item 3).
-4. Domínio público e proteção de deploy na Vercel (item 4).
+4. ~~Domínio público e proteção de deploy na Vercel~~: produção acessível sem login em
+   [brasiltse.vercel.app](https://brasiltse.vercel.app/); preview da PR #5 protegido (item 4).
 5. Página inicial: hoje abre o 2º turno. Para voltar ao mapa do 1º turno, basta trocar
    `turnoPadrao` em `src/app/modo.ts`.
