@@ -1,0 +1,65 @@
+/* Tokens do tema claro.
+   Paleta amostrada das imagens de referência fornecidas pelo responsável:
+   1.PNG (Statista) — fundo #F8F8F8, faixas #ECECEC, grade #D4D4D4, texto #444;
+   2.PNG (BBC)      — fundo #F4F4F4, azul #1E57C9, vermelho #D82121, cinza #A8A8A8, texto #000/#505050.
+   Medidas e escala tipográfica seguem o plano (seção 4). */
+
+:root {
+  color-scheme: light;
+  --bg: #F4F4F4;
+  --bg-2: #F8F8F8;
+  --faixa: #ECECEC;
+  --grade: #D4D4D4;
+  --panel: #FFFFFF;
+  --panel-2: #FAFAF9;
+  --panel-3: #EFEFED;
+  --glass: rgba(255, 255, 255, 0.9);
+  --fg: #111111;
+  --fg-2: #2E2E2E;
+  --fg-3: #505050;
+  --fg-4: #6B6B6B;
+  --fg-5: #8E8E8E;
+  --line: rgba(17, 17, 17, 0.08);
+  --line-2: rgba(17, 17, 17, 0.14);
+  --line-3: rgba(17, 17, 17, 0.24);
+  --azul: #1E57C9;
+  --vermelho: #D82121;
+  --cinza: #A8A8A8;
+  --sem-dados: #DCDCDA;
+  --foco: #1E57C9;
+
+  --serif: "Faustina", Georgia, "Times New Roman", serif;
+  --sans: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --t-manchete: 27px;
+  --t-fig: 42px;
+  --t-fig-m: 26px;
+  --t-name: 14px;
+  --t-body: 13px;
+  --t-label: 12px;
+  --t-micro: 11px;
+
+  --m: 20px;
+  --pad: 16px;
+  --gap: 12px;
+  --raio: 16px;
+  --col-esq: 336px;
+  --col-dir: 308px;
+  --topo-colunas: 72px;
+
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --hover: .12s;
+  --sombra: 0 1px 2px rgba(17, 17, 17, 0.04), 0 8px 24px -12px rgba(17, 17, 17, 0.10);
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --fg-3: #333;
+    --fg-4: #444;
+    --fg-5: #555;
+    --line: rgba(17, 17, 17, 0.25);
+    --line-2: rgba(17, 17, 17, 0.4);
+    --glass: #FFFFFF;
+  }
+}

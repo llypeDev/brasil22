@@ -1,0 +1,29 @@
+# dependências e saídas de build
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# brutos baixados (TSE, IBGE, fotos): reconstruíveis pelos scripts de dados
+dados-brutos/
+
+# contatos dos formulários e outros dados privados: nunca versionar
+dados/privado/
+
+# snapshots próprios arquivados pelo coletor ao vivo (grandes; ficam no servidor)
+dados/arquivo-oficial/
+
+# testes de ponta a ponta
+test-results/
+playwright-report/
+blob-report/
+
+# temporários e locais
+*.tmp
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+.claude/

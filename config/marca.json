@@ -1,0 +1,38 @@
+{
+  "_comentario": "Identidade, autoria e campanhas do painel. Troque estes valores pelos fornecidos pelo responsável. Campos vazios são ocultados.",
+  "titulo": "Apuração 2026",
+  "autoria": { "rotulo": "por", "nome": "Painel Independente", "url": null },
+  "redes": [],
+  "dominio": "localhost",
+  "faixaInstitucional": {
+    "ativa": true,
+    "texto": "Painel independente com os arquivos públicos de resultados do TSE.",
+    "acao": "Acesso sob convite",
+    "abre": "acesso"
+  },
+  "convite": {
+    "titulo": "Acesso sob convite",
+    "texto": "Receba alertas da apuração e acesso antecipado às próximas ferramentas. Conte onde você trabalha e entramos em contato.",
+    "rodape": "Seus dados servem só para entrarmos em contato."
+  },
+  "anuncieAqui": {
+    "titulo": "Anuncie aqui",
+    "texto": "Leve a sua marca a quem acompanha a apuração neste painel. Conte qual é a empresa e falamos com você.",
+    "rodape": "Seus dados servem só para entrarmos em contato."
+  },
+  "campanhas": [
+    {
+      "id": "demonstracao-2026",
+      "ativa": true,
+      "demonstracao": true,
+      "marca": "Sua Marca",
+      "faixa": { "titulo": "Sua Marca", "texto": "Espaço publicitário de demonstração", "detalhe": "Fale com a gente para anunciar", "acao": "Saber mais →" },
+      "card": { "titulo": "Sua Marca", "detalhe": "Espaço de demonstração · anuncie aqui", "acao": "Saber mais" },
+      "modal": { "titulo": "Este espaço pode ser seu", "texto": "Campanha de demonstração. A arte, o destino e a vigência são configurados em config/marca.json.", "acao": "Quero anunciar" },
+      "destino": null,
+      "abre": "anuncio",
+      "cores": { "fundo": "#141414", "texto": "#F4F4F4", "destaque": "#F2B705" },
+      "vigencia": { "inicio": "2026-09-01", "fim": "2026-11-30" }
+    }
+  ]
+}

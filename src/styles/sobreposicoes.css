@@ -1,0 +1,80 @@
+.modal-fundo { position: fixed; inset: 0; z-index: 50; background: rgba(20, 20, 20, .32); backdrop-filter: blur(3px); display: grid; place-items: start center; padding: 9vh 16px 16px; animation: fundo .2s var(--ease); }
+@keyframes fundo { from { opacity: 0; } }
+.modal { width: min(560px, 100%); max-height: 82vh; overflow: auto; background: #FFF; border: 1px solid var(--line-2); border-radius: 18px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.35); padding: 18px; animation: entrada .35s var(--ease-out); }
+.modal h2.serif { font: 400 26px/1.1 var(--serif); }
+
+/* busca */
+.modal.busca { width: min(520px, 100%); padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.busca-campo { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); color: var(--fg-4); }
+.busca-campo svg { width: 18px; height: 18px; flex: none; }
+.busca-campo input { flex: 1; border: 0; outline: 0; background: transparent; font: 400 15px/1.2 var(--sans); color: var(--fg); min-width: 0; }
+.busca-campo input::placeholder { color: var(--fg-5); }
+.busca-resultados { max-height: min(56vh, 460px); overflow: auto; padding: 6px; }
+.busca-grupo { font: 600 10.5px/1 var(--sans); text-transform: uppercase; letter-spacing: .07em; color: var(--fg-5); padding: 10px 10px 6px; }
+.busca-item { display: grid; grid-template-columns: 36px 1fr; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 10px; cursor: pointer; }
+.busca-item.ativo { background: var(--panel-3); }
+.busca-selo { display: grid; place-items: center; height: 26px; border-radius: 6px; background: #EDEDEA; font: 600 10.5px/1 var(--sans); color: var(--fg-2); }
+.busca-texto { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.busca-texto b { font: 500 var(--t-body)/1.2 var(--sans); }
+.busca-texto small { font: 400 var(--t-micro)/1.2 var(--sans); color: var(--fg-4); }
+.busca-vazio { padding: 16px; color: var(--fg-4); font-size: var(--t-label); }
+.busca-rodape { display: flex; gap: 14px; padding: 10px 16px; border-top: 1px solid var(--line); font-size: var(--t-micro); color: var(--fg-4); }
+.busca-rodape kbd { margin-right: 3px; }
+
+/* lista completa */
+.modal.lista-completa { width: min(720px, 100%); }
+.lc-hd { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 12px; }
+.lc-hd p { font-size: var(--t-label); margin-top: 4px; }
+.tabela { width: 100%; border-collapse: collapse; font-size: var(--t-label); }
+.tabela th { text-align: left; font: 600 var(--t-micro)/1 var(--sans); color: var(--fg-4); text-transform: uppercase; letter-spacing: .05em; padding: 8px 6px; border-bottom: 1px solid var(--line-2); }
+.tabela td { padding: 6px; border-bottom: 1px solid var(--line); }
+.tabela .num { text-align: right; }
+.tabela tr.anulado { color: var(--fg-4); }
+.lc-cand { all: unset; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.lc-cand span { display: flex; flex-direction: column; gap: 2px; }
+.lc-cand small { font: 600 var(--t-micro)/1 var(--sans); }
+.lc-cand:hover b { text-decoration: underline; }
+.lc-filtro { width: 100%; height: 38px; border-radius: 10px; border: 1px solid var(--line-2); padding: 0 12px; margin-bottom: 8px; font-size: var(--t-body); }
+.lc-filtro:focus { outline: 2px solid var(--foco); outline-offset: 0; }
+
+/* formulários */
+.modal.formulario { width: min(440px, 100%); padding: 22px; }
+.form-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.form-marca { font: 600 var(--t-label)/1 var(--sans); color: var(--fg-3); }
+.formulario form { display: flex; flex-direction: column; }
+.form-texto { color: var(--fg-3); margin: 6px 0 16px; font-size: var(--t-body); }
+.formulario label { font: 600 var(--t-label)/1 var(--sans); margin: 10px 0 6px; }
+.formulario input { height: 46px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--panel-2); padding: 0 14px; font: 400 15px/1 var(--sans); color: var(--fg); }
+.formulario input:focus { outline: 2px solid var(--foco); outline-offset: 0; background: #FFF; }
+.formulario input[aria-invalid="true"] { border-color: #C62828; background: #FFF7F7; }
+.erro-campo { color: #B71C1C; font-size: var(--t-micro); margin-top: 5px; }
+.erro-form { color: #8A1C1C; background: #FDECEC; border-radius: 10px; padding: 8px 10px; font-size: var(--t-label); margin-top: 12px; }
+.campo-oculto { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.enviar { height: 48px; margin-top: 20px; font-size: 14px; }
+.form-rodape { text-align: center; color: var(--fg-4); font-size: var(--t-micro); margin-top: 10px; }
+.form-ok { display: flex; flex-direction: column; gap: 10px; padding: 8px 0; }
+.giro { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,.4); border-top-color: #FFF; animation: giro .8s linear infinite; }
+@keyframes giro { to { transform: rotate(360deg); } }
+
+/* campanha */
+.modal.modal-campanha { width: min(600px, 100%); padding: 0; overflow: hidden; }
+.arte { position: relative; aspect-ratio: 3 / 2; display: grid; place-items: center; }
+.arte img { width: 100%; height: 100%; object-fit: cover; }
+.arte-texto { display: flex; flex-direction: column; gap: 10px; padding: 36px; max-width: 460px; }
+.arte-texto b { font: 400 34px/1.05 var(--serif); }
+.arte-texto p { opacity: .8; font-size: 14px; }
+.arte-rotulo { font: 600 10px/1 var(--sans); text-transform: uppercase; letter-spacing: .1em; opacity: .7; }
+.arte-marca { font: 600 15px/1 var(--serif); margin-top: 10px; }
+.fechar-arte { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,.15); color: inherit; }
+.arte-acoes { display: flex; gap: 8px; padding: 14px; justify-content: flex-end; }
+
+/* metodologia */
+.modal.metodologia { width: min(680px, 100%); }
+.met-corpo h3 { font: 600 var(--t-name)/1.3 var(--sans); margin: 16px 0 6px; }
+.met-corpo p { color: var(--fg-2); font-size: var(--t-body); margin-bottom: 6px; }
+.met-modo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.met-modo button { all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: 12px; border: 1px solid var(--line-2); }
+.met-modo button small { color: var(--fg-4); font-size: var(--t-micro); }
+.met-modo button[aria-pressed="true"] { border-color: var(--fg); box-shadow: inset 0 0 0 1px var(--fg); }
+.met-modo button:focus-visible { outline: 2px solid var(--foco); }
+.met-links { margin-top: 12px; font-size: var(--t-label); }

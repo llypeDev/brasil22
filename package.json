@@ -1,0 +1,58 @@
+{
+  "name": "apuracao-2026",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Painel de apuração das eleições gerais de 2026 — mapa, cargos, histórico, exterior e modo TV.",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "start": "node --env-file-if-exists=.env server/index.mjs",
+    "preview": "npm run build && npm start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "dados:geo": "node scripts/geo/construir-geografia.mjs",
+    "dados:tse:coletar": "node scripts/tse/coletar.mjs",
+    "dados:tse:normalizar": "node scripts/tse/normalizar.mjs",
+    "dados:2022": "node scripts/historico/construir-2022.mjs",
+    "dados:zonas": "node scripts/geo/construir-zonas.mjs",
+    "dados:senado": "node scripts/senado/composicao.mjs",
+    "coletor": "node scripts/tse/coletor-ao-vivo.mjs"
+  },
+  "dependencies": {
+    "@fontsource/faustina": "^5.2.6",
+    "@fontsource/geist": "^5.2.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "topojson-client": "^3.1.0",
+    "zustand": "^5.0.6"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "@types/d3-geo": "^3.1.0",
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@types/topojson-client": "^3.1.5",
+    "@types/topojson-server": "^3.0.4",
+    "@types/topojson-simplify": "^3.0.3",
+    "@vitejs/plugin-react": "^4.7.0",
+    "d3-delaunay": "^6.0.4",
+    "d3-geo": "^3.1.1",
+    "geo-tz": "^8.1.9",
+    "jsdom": "^26.1.0",
+    "polygon-clipping": "^0.15.7",
+    "topojson-server": "^3.0.1",
+    "topojson-simplify": "^3.0.3",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.6",
+    "vitest": "^3.2.4",
+    "world-atlas": "^2.0.2",
+    "yauzl": "^3.2.0"
+  }
+}

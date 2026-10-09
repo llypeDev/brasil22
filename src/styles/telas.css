@@ -1,0 +1,80 @@
+/* ---------- celular (fluxo), tablet e paisagem ---------- */
+.painel.fluxo { position: static; overflow: visible; padding: 0 12px calc(64px + env(safe-area-inset-bottom)); background: var(--bg); }
+.painel.fluxo > * + * { margin-top: 12px; }
+.painel.fluxo .card { box-shadow: none; }
+.painel.fluxo .card.grow { overflow: visible; }
+.v-celular .faixas, .v-tablet .faixas, .v-paisagem .faixas { position: static; }
+.v-celular .faixa-campanha, .v-tablet .faixa-campanha { height: 30px; font-size: 11.5px; }
+.v-celular .faixa-institucional, .v-tablet .faixa-institucional { height: auto; min-height: 40px; padding: 6px 16px; white-space: normal; text-align: center; line-height: 1.35; font-size: 11.5px; }
+.topo-celular { display: flex; flex-direction: column; gap: 10px; padding-top: 14px; }
+.tc-linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.topo-celular .marca { flex-direction: column; align-items: flex-start; gap: 4px; }
+.topo-celular .marca b { font-size: 20px; }
+.tc-linha .vivo { margin-right: auto; }
+.tc-pessoas { display: inline-flex; align-items: center; gap: 4px; font-size: var(--t-label); color: var(--fg-3); }
+.painel.fluxo .abas-cargo { justify-content: space-between; }
+.painel.fluxo .abas-cargo button { flex: 1; justify-content: center; padding: 0 8px; height: 36px; }
+.mapa-bloco { position: relative; border-radius: var(--raio); overflow: hidden; background: radial-gradient(110% 90% at 55% 50%, #F9F9F8, var(--bg) 65%, #EFEFED); border: 1px solid var(--line); }
+.mb-barra { position: absolute; left: 8px; right: 8px; top: 8px; z-index: 3; }
+.mb-barra .barra-mapa { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.mb-barra .legenda { display: none; }
+.mb-zoom { position: absolute; left: 8px; bottom: 8px; z-index: 3; }
+.mb-zoom .zoomctl button { width: 36px; height: 36px; }
+.bloco-tempo .linha-tempo { border-radius: 14px; }
+.linha-tempo.compacta { gap: 8px; padding: 0 6px 0 8px; }
+.linha-tempo.compacta .ticks span:nth-child(odd) { display: none; }
+.bloco-cards { display: flex; flex-direction: column; gap: 12px; }
+.bloco-anuncio .card-anuncio { width: 100%; }
+.painel.tablet { max-width: 980px; margin: 0 auto; }
+.tablet-colunas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+.painel.paisagem { position: fixed; display: grid; grid-template-columns: 56% 44%; background: var(--bg); }
+.pa-mapa { position: relative; padding: 6px; display: flex; flex-direction: column; gap: 6px; }
+.pa-mapa .mapa-bloco { flex: 1; height: auto !important; }
+.pa-tempo { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 4; }
+.pa-lado { overflow: auto; padding: 8px 10px 40px 4px; display: flex; flex-direction: column; gap: 10px; }
+.pa-lado > * { flex-shrink: 0; } /* a coluna rola; os blocos não encolhem (as abas sumiam) */
+.pa-lado .topo-celular { padding-top: 4px; }
+.painel.paisagem .card.grow { overflow: visible; }
+.v-celular .rotulo-uf.em-chamada { padding: 3px 5px; min-width: 40px; }
+.v-celular .modal-fundo.folha, .v-tablet .modal-fundo.folha { place-items: end stretch; padding: 0; }
+@media (max-width: 640px) {
+  .modal-fundo.folha { place-items: end stretch; padding: 0; }
+  .modal-fundo.folha .modal { width: 100%; max-height: 88vh; border-radius: 22px 22px 0 0; padding-bottom: calc(18px + env(safe-area-inset-bottom)); animation: folha .35s var(--ease-out); }
+  @keyframes folha { from { transform: translateY(30px); opacity: 0; } }
+  .met-modo { grid-template-columns: 1fr; }
+  .grade-ufs { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+}
+
+/* ---------- TV ---------- */
+.painel.tv { position: fixed; inset: 0; }
+.painel.tv .hud::before { height: 90px; }
+.tv-topo { top: 18px; left: 24px; right: 24px; }
+.tv-topo .marca { flex: 0 0 360px; }
+.tv-topo .marca b { font-size: 24px; }
+.tv-abas span { cursor: default; font-size: 15px; height: 34px; padding: 0 16px; }
+.tv-controles { display: flex; gap: 8px; transition: opacity .4s var(--ease); }
+.painel.tv.ocioso .tv-controles { opacity: 0; }
+.painel.tv.ocioso .tv-controles:focus-within { opacity: 1; }
+.painel.tv.ocioso { cursor: none; }
+.tv-legenda { position: absolute; top: 84px; z-index: 3; }
+.tv-legenda .legenda { font-size: 14px; }
+.tv-col { width: 380px; left: 24px; bottom: 92px; overflow: hidden; }
+.tv-col .manchete { font-size: 32px; margin-bottom: 12px; }
+.tv-col .figura { font-size: 50px; }
+.tv-col .outros, .tv-col .link.todos, .tv-col .metricas, .tv-col .nota, .tv-col .nota-fonte, .tv-col .aviso-registro { display: none; }
+.tv-col .evolucao { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.tv-col .grow { overflow: hidden; }
+.tv-faixa { position: absolute; left: 24px; right: 24px; bottom: 22px; height: 52px; }
+.faixa-tv { display: flex; align-items: center; height: 100%; border-radius: 100px; background: rgba(255,255,255,.95); border: 1px solid var(--line); overflow: hidden; box-shadow: var(--sombra); }
+.fx-rotulo { flex: none; height: 100%; display: grid; place-items: center; padding: 0 22px; background: var(--fg); color: #FFF; font: 600 15px/1 var(--sans); border-radius: 100px; }
+.fx-janela { flex: 1; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
+.fx-trilho { display: inline-flex; gap: 40px; white-space: nowrap; animation: rolar linear infinite; padding-left: 20px; }
+.fx-item { font: 400 17px/1 var(--sans); color: var(--fg-2); }
+.fx-item time { color: var(--fg-4); margin-right: 10px; font-weight: 500; }
+.fx-item b { color: var(--fg); font-weight: 600; }
+@keyframes rolar { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .fx-trilho { animation: none; } }
+
+/* celular estreito: duelo sem fotos, como na referência */
+.v-celular .cand-nacional .lado .retrato { display: none; }
+.v-celular .lado.dir .lado-nome { align-items: flex-end; }

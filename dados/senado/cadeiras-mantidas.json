@@ -1,0 +1,172 @@
+{
+ "versao": 1,
+ "fonte": "Senado Federal — Dados Abertos (senador/lista/atual)",
+ "url": "https://legis.senado.leg.br/dadosabertos/senador/lista/atual.json",
+ "consultadoEm": "2026-10-08T22:23:47.891Z",
+ "observacao": "Partido atual do parlamentar em exercício na data da consulta (titular ou suplente em exercício).",
+ "emExercicio": 81,
+ "cadeiras": [
+  {
+   "uf": "AC",
+   "nome": "Alan Rick",
+   "partido": "REPUBLICANOS",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "AL",
+   "nome": "Renan Filho",
+   "partido": "MDB",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "AM",
+   "nome": "Omar Aziz",
+   "partido": "PSD",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "AP",
+   "nome": "Davi Alcolumbre",
+   "partido": "UNIÃO",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "BA",
+   "nome": "Otto Alencar",
+   "partido": "PSD",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "CE",
+   "nome": "Camilo Santana",
+   "partido": "PT",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "DF",
+   "nome": "Damares Alves",
+   "partido": "REPUBLICANOS",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "ES",
+   "nome": "Magno Malta",
+   "partido": "PL",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "GO",
+   "nome": "Wilder Morais",
+   "partido": "PL",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "MA",
+   "nome": "Ana Paula Lobato",
+   "partido": "PSB",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "MG",
+   "nome": "Cleitinho",
+   "partido": "REPUBLICANOS",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "MS",
+   "nome": "Tereza Cristina",
+   "partido": "PP",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "MT",
+   "nome": "Wellington Fagundes",
+   "partido": "PL",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "PA",
+   "nome": "Beto Faro",
+   "partido": "PT",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "PB",
+   "nome": "Efraim Filho",
+   "partido": "PL",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "PE",
+   "nome": "Teresa Leitão",
+   "partido": "PT",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "PI",
+   "nome": "Jussara Lima",
+   "partido": "PSD",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "PR",
+   "nome": "Sergio Moro",
+   "partido": "PL",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "RJ",
+   "nome": "Romário",
+   "partido": "S/Partido",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "RN",
+   "nome": "Rogerio Marinho",
+   "partido": "PL",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "RO",
+   "nome": "Jaime Bagattoli",
+   "partido": "PL",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "RR",
+   "nome": "Dr. Hiran",
+   "partido": "PP",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "RS",
+   "nome": "Hamilton Mourão",
+   "partido": "REPUBLICANOS",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "SC",
+   "nome": "Jorge Seif",
+   "partido": "PL",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "SE",
+   "nome": "Laércio Oliveira",
+   "partido": "PP",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "SP",
+   "nome": "Astronauta Marcos Pontes",
+   "partido": "PL",
+   "mandatoAte": "2031-01-31"
+  },
+  {
+   "uf": "TO",
+   "nome": "Professora Dorinha Seabra",
+   "partido": "UNIÃO",
+   "mandatoAte": "2031-01-31"
+  }
+ ]
+}
