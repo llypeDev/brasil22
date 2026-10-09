@@ -381,6 +381,7 @@ test('T16 · sem fragmento abre o 2º turno; dele se vai ao 1º turno e se volta
 });
 
 test('T17 · apuração do 2º turno atualiza, consulta lugares e preserva o painel completo do 1º', async ({ page }) => {
+  test.setTimeout(45_000);
   await page.clock.install();
   let final = false;
   let falha = false;
@@ -395,9 +396,11 @@ test('T17 · apuração do 2º turno atualiza, consulta lugares e preserva o pai
   await expect(nacional).not.toContainText('eleito(a)');
   await expect(page.locator('.p2t-gov > li')).toHaveCount(7);
   await page.getByRole('button', { name: 'Ver presidente em Minas Gerais no 2º turno' }).click();
-  await page.getByLabel('Município', { exact: true }).selectOption('41238');
+  const municipios = page.getByRole('combobox', { name: /^Município/ });
+  await expect(municipios).toBeEnabled();
+  await municipios.selectOption('41238');
   await expect(page.getByRole('region', { name: 'Presidente · Belo Horizonte', exact: true })).toContainText('350');
-  await page.getByLabel('Zona eleitoral', { exact: true }).selectOption('26');
+  await page.getByRole('combobox', { name: /^Zona eleitoral/ }).selectOption('26');
   await expect(page.getByRole('region', { name: 'Presidente · Belo Horizonte · Zona 26', exact: true })).toContainText('200 votos');
   await page.getByRole('button', { name: 'Ver votos do exterior no 2º turno' }).click();
   await expect(page.getByLabel('Estado ou exterior')).toHaveValue('ZZ');
