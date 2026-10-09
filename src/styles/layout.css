@@ -1,7 +1,7 @@
 /* ---------- casca ---------- */
 .app { position: relative; height: 100%; }
 .painel { position: fixed; left: 0; right: 0; overflow: hidden; background: var(--bg); }
-.area-mapa { position: absolute; inset: 0; background: radial-gradient(120% 90% at 55% 50%, #F9F9F8 0%, var(--bg) 60%, #EFEFED 100%); }
+.area-mapa { position: absolute; inset: 0; background: radial-gradient(120% 90% at 55% 50%, #FCFDF7 0%, var(--bg) 60%, #E5EEDD 100%); }
 .mapa { position: absolute; inset: 0; }
 .mapa canvas { position: absolute; left: 0; top: 0; display: block; }
 .mapa .mapa-sobre { touch-action: none; cursor: grab; }
@@ -15,7 +15,7 @@
 .hud > * { pointer-events: auto; }
 .hud::before {
   content: ""; position: absolute; left: 0; right: 0; top: 0; height: 120px; pointer-events: none;
-  background: linear-gradient(var(--bg) 40%, rgba(244, 244, 244, 0));
+  background: linear-gradient(var(--bg) 40%, rgba(242, 246, 239, 0));
 }
 .topo { position: absolute; left: var(--m); right: var(--m); top: 14px; height: 44px; display: flex; align-items: center; gap: 20px; z-index: 4; container-type: inline-size; }
 .topo .marca { flex: 0 0 336px; }

@@ -7,7 +7,7 @@ import { usePaginas, Paginador } from '../../components/Composicao';
 import { useAgora } from '../../data/useFeed';
 import { fracaoSecoes, linhas, vantagem, type Linha } from '../../data/calculos';
 import { compacto, pct, pctS } from '../../data/formato';
-import { partido, siglaExibicao } from '../../data/partidos';
+import { partido, textoSobreCor, siglaExibicao } from '../../data/partidos';
 import { Anulados, ListaCandidatos, Secao } from '../../components/Candidatos';
 import { BarraDupla } from '../../components/Barra';
 import { Retrato } from '../../components/Retrato';
@@ -80,7 +80,7 @@ function MunicipiosDaUf({ uf, cargo }: { uf: string; cargo: 'presidente' | 'gove
           return (
             <li key={geo.ibge[g]}>
               <button onClick={() => navegar({ mun: geo.ibge[g], zona: null })} aria-label={`${geo.nome[g]}: ${l ? `${l.c.nome} ${pctS(l.parcela, 1)}` : 'sem dados'}`}>
-                <span className="chip-pais" style={{ background: l ? partido(l.c.partido).cor : '#CCC' }}>{l ? siglaExibicao(l.c.partido) : '—'}</span>
+                <span className="chip-pais" style={{ background: l ? partido(l.c.partido).cor : '#CCC', color: textoSobreCor(l ? partido(l.c.partido).cor : '#CCC') }}>{l ? siglaExibicao(l.c.partido) : '—'}</span>
                 <span className="nome"><b>{geo.nome[g]}</b><small className="tn">{r ? `${compacto(r.eleitorado)} eleitores` : ''}</small></span>
                 <span />
                 <b className="tn" style={{ color: l ? partido(l.c.partido).texto : undefined }}>{l ? pctS(l.parcela, 1) : '—'}</b>

@@ -6,7 +6,7 @@ import { candidatosDe, useDeputadosUf, useGeoBrasil, useUfMunicipal, UF_NOME } f
 import { useAgora } from '../../data/useFeed';
 import { fracaoSecoes, linhas, parcelaColunar, rotuloSituacao } from '../../data/calculos';
 import { num, pct, pctS, tituloLugar } from '../../data/formato';
-import { partido, siglaExibicao } from '../../data/partidos';
+import { partido, textoSobreCor, siglaExibicao } from '../../data/partidos';
 import { Retrato } from '../../components/Retrato';
 import { IconeEsq, IconeFechar } from '../../components/Icones';
 import { fecharPerfil } from './acoes';
@@ -96,7 +96,7 @@ export function CardPerfil() {
           {lugares && (
             <div className="melhor-pior">
               <h4>Onde vai melhor</h4>
-              <ul>{lugares.melhor.map((x) => <li key={x.id}><button onClick={() => x.rotulo && navegar({ uf: x.id })} disabled={!x.rotulo}>{x.rotulo && <span className="chip-uf mini" style={{ background: p.claro }}>{x.rotulo}</span>}<span className="nome">{x.nome}</span><b className="tn" style={{ color: p.texto }}>{pctS(x.p, 1)}</b></button></li>)}</ul>
+              <ul>{lugares.melhor.map((x) => <li key={x.id}><button onClick={() => x.rotulo && navegar({ uf: x.id })} disabled={!x.rotulo}>{x.rotulo && <span className="chip-uf mini" style={{ background: p.claro, color: textoSobreCor(p.claro) }}>{x.rotulo}</span>}<span className="nome">{x.nome}</span><b className="tn" style={{ color: p.texto }}>{pctS(x.p, 1)}</b></button></li>)}</ul>
               <h4>Onde vai pior</h4>
               <ul>{lugares.pior.map((x) => <li key={x.id}><button onClick={() => x.rotulo && navegar({ uf: x.id })} disabled={!x.rotulo}>{x.rotulo && <span className="chip-uf mini" style={{ background: '#E4E4E1' }}>{x.rotulo}</span>}<span className="nome">{x.nome}</span><b className="tn">{pctS(x.p, 1)}</b></button></li>)}</ul>
               {lugares.tipo === 'mun' && <p className="nota-fonte">Municípios com pelo menos 5 mil eleitores.</p>}

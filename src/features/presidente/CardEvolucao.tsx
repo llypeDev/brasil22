@@ -7,7 +7,7 @@ import { useEstado } from '../../app/store';
 import { useHistoricoSerie } from '../../app/dados';
 import { useAgora } from '../../data/useFeed';
 import { linhas, vantagem } from '../../data/calculos';
-import { partido } from '../../data/partidos';
+import { partido, textoSobreCor } from '../../data/partidos';
 import { pct } from '../../data/formato';
 import { ordenarDupla } from './CardNacional';
 import type { PontoHistorico } from '../../data/contratos';
@@ -75,7 +75,7 @@ export function GraficoEvolucao({ largura = 300, altura = 118, compacto = false 
         <g key={`f${numeros[k]}`}>
           <circle cx={sx(f.x)} cy={sy(f.y)} r="2.8" fill={partido(nomes[k]?.partido ?? '').cor} />
           <rect x={M.e + W + 5} y={ys[k] - 8} width={40} height={16} rx={4} fill={partido(nomes[k]?.partido ?? '').cor} />
-          <text x={M.e + W + 25} y={ys[k] + 4} textAnchor="middle" className="rotulo-final">{pct(f.y, 1)}%</text>
+          <text x={M.e + W + 25} y={ys[k] + 4} textAnchor="middle" className="rotulo-final" fill={textoSobreCor(partido(nomes[k]?.partido ?? '').cor)}>{pct(f.y, 1)}%</text>
         </g>
       ))}
     </svg>

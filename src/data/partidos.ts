@@ -1,9 +1,9 @@
 // Catálogo partidário do painel.
 //
-// Cores-base: catálogo documentado na referência (logos e sites dos partidos), adaptado ao
-// tema claro do projeto: PT e PL fixados no vermelho #D82121 e no azul #1E57C9 das imagens
-// de referência; demais cores escurecidas em OKLCH apenas o necessário para contraste mínimo
-// de 1,75:1 contra o fundo #F4F4F4 (preenchimento) e 4,6:1 contra branco (texto).
+// Paleta do painel: PL em verde e PT em amarelo, inspirados na bandeira do Brasil.
+// As cores são convenções visuais do painel, não cores oficiais das legendas.
+// `texto` usa uma variante escura para manter a leitura sobre os cards claros.
+// Os demais partidos mantêm cores distintas para as vistas com várias legendas.
 // `claro` é a mistura com branco usada para "apurando"/vantagem pequena; `escuro`, a
 // variante para vantagem muito grande.
 //
@@ -28,14 +28,14 @@ export const PARTIDOS: Record<string, Partido> = {
   "REPUBLICANOS": { n: "10", sg: "Republicanos", nome: "Republicanos", federacao: null, cor: "#4181AD", texto: "#3878A3", claro: "#AAC6DA", escuro: "#1A5E88" },
   "PP": { n: "11", sg: "PP", nome: "Progressistas", federacao: "UNIÃO PROGRESSISTA", cor: "#6FC6DE", texto: "#1E7E95", claro: "#BEE5F0", escuro: "#47A0B7" },
   "PDT": { n: "12", sg: "PDT", nome: "Partido Democrático Trabalhista", federacao: null, cor: "#DC4C92", texto: "#CA3B83", claro: "#EFAECE", escuro: "#B2206E" },
-  "PT": { n: "13", sg: "PT", nome: "Partido dos Trabalhadores", federacao: "FE BRASIL", cor: "#D82121", texto: "#D82121", claro: "#ED9B9B", escuro: "#AD0000" },
+  "PT": { n: "13", sg: "PT", nome: "Partido dos Trabalhadores", federacao: "FE BRASIL", cor: "#F2C500", texto: "#7A5D00", claro: "#FAE99A", escuro: "#B18B00" },
   "MISSÃO": { n: "14", sg: "Missão", nome: "Partido Missão", federacao: null, cor: "#CEA608", texto: "#956E00", claro: "#E9D790", escuro: "#A88100" },
   "MDB": { n: "15", sg: "MDB", nome: "Movimento Democrático Brasileiro", federacao: null, cor: "#01813A", texto: "#01813A", claro: "#8DC6A6", escuro: "#005D16" },
   "PSTU": { n: "16", sg: "PSTU", nome: "Partido Socialista dos Trabalhadores Unificado", federacao: null, cor: "#F38C8E", texto: "#B55559", claro: "#FACBCC", escuro: "#CA676A" },
   "REDE": { n: "18", sg: "Rede", nome: "Rede Sustentabilidade", federacao: "PSOL REDE", cor: "#3FC3AE", texto: "#008472", claro: "#A9E4DB", escuro: "#009D89" },
   "PODE": { n: "20", sg: "Podemos", nome: "Podemos", federacao: null, cor: "#AB6BD6", texto: "#9859C2", claro: "#D9BCED", escuro: "#8646AE" },
   "PCB": { n: "21", sg: "PCB", nome: "Partido Comunista Brasileiro", federacao: null, cor: "#B7535D", texto: "#B7535D", claro: "#DFB2B6", escuro: "#8F2F3C" },
-  "PL": { n: "22", sg: "PL", nome: "Partido Liberal", federacao: null, cor: "#1E57C9", texto: "#1E57C9", claro: "#9AB3E7", escuro: "#0030A1" },
+  "PL": { n: "22", sg: "PL", nome: "Partido Liberal", federacao: null, cor: "#008C45", texto: "#006B34", claro: "#A3D8B5", escuro: "#005C2D" },
   "CIDADANIA": { n: "23", sg: "Cidadania", nome: "Cidadania", federacao: "PSDB CIDADANIA", cor: "#F0289B", texto: "#DE008C", claro: "#F89ED2", escuro: "#C40077" },
   "PRD": { n: "25", sg: "PRD", nome: "Partido Renovação Democrática", federacao: "RENOVAÇÃO SOLIDÁRIA", cor: "#14938D", texto: "#00817B", claro: "#95CECC", escuro: "#006F6A" },
   "DC": { n: "27", sg: "DC", nome: "Democracia Cristã", federacao: null, cor: "#BC8C30", texto: "#996B00", claro: "#E1CBA2", escuro: "#966800" },
@@ -68,6 +68,18 @@ export function chavePartido(sigla: string | undefined | null): string {
 
 export function partido(sigla: string | undefined | null): Partido {
   return PARTIDOS[chavePartido(sigla)] ?? { ...SEM_PARTIDO, sg: String(sigla ?? '—') };
+}
+
+/** Preto ou branco conforme a luminância do fundo: mantém contraste em chips e rótulos. */
+export function textoSobreCor(cor: string): string {
+  const hex = cor.replace('#', '');
+  const completo = hex.length === 3 ? [...hex].map((c) => c + c).join('') : hex;
+  const rgb = [0, 2, 4].map((i) => {
+    const canal = parseInt(completo.slice(i, i + 2), 16) / 255;
+    return canal <= 0.04045 ? canal / 12.92 : ((canal + 0.055) / 1.055) ** 2.4;
+  });
+  const luminancia = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+  return luminancia > 0.179 ? '#000000' : '#FFFFFF';
 }
 
 /** Sigla de exibição (ex.: "UNIÃO" → "União", "PODE" → "Podemos"). */

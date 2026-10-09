@@ -1,7 +1,7 @@
 // Componentes de composição: hemiciclo, barra ideológica, grade de UFs e paginação.
 
 import { useMemo, useState, type ReactNode } from 'react';
-import { CENTRAO, ESCALA_IDEOLOGICA, NOTA_IDEOLOGIA, bloco, chavePartido, partido, siglaExibicao, COR_CENTRAO } from '../data/partidos';
+import { CENTRAO, ESCALA_IDEOLOGICA, NOTA_IDEOLOGIA, bloco, chavePartido, partido, textoSobreCor, siglaExibicao, COR_CENTRAO } from '../data/partidos';
 import { misturar } from '../map/cores';
 import { num } from '../data/formato';
 import { IconeDir, IconeEsq } from './Icones';
@@ -102,8 +102,8 @@ export function GradeUfs({ chips, aoEscolher, selecionada }: { chips: ChipUf[]; 
     <div className="grade-ufs">
       {chips.map((c) => (
         <button key={c.uf} className={`chip-uf ${c.uf === selecionada ? 'sel' : ''}`} onClick={() => aoEscolher(c.uf)} aria-label={c.aria}
-          style={{ background: c.cores.length > 1 ? `linear-gradient(135deg, ${c.cores[0]} 50%, ${c.cores[1]} 50%)` : c.cores[0] ?? '#E4E4E1' }}>
-          {c.rotulo ?? c.uf}
+          style={{ background: c.cores.length > 1 ? `linear-gradient(135deg, ${c.cores[0]} 50%, ${c.cores[1]} 50%)` : c.cores[0] ?? '#E4E4E1', color: textoSobreCor(c.cores[0] ?? '#E4E4E1') }}>
+          <span className={c.cores.length > 1 ? 'chip-rotulo-misto' : undefined}>{c.rotulo ?? c.uf}</span>
         </button>
       ))}
     </div>

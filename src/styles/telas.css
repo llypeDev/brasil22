@@ -8,13 +8,13 @@
 .v-celular .faixa-institucional, .v-tablet .faixa-institucional { height: auto; min-height: 40px; padding: 6px 16px; white-space: normal; text-align: center; line-height: 1.35; font-size: 11.5px; }
 .topo-celular { display: flex; flex-direction: column; gap: 10px; padding-top: 14px; }
 .tc-linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.topo-celular .marca { flex-direction: column; align-items: flex-start; gap: 4px; }
+.topo-celular .marca { gap: 3px 8px; }
 .topo-celular .marca b { font-size: 20px; }
 .tc-linha .vivo { margin-right: auto; }
 .tc-pessoas { display: inline-flex; align-items: center; gap: 4px; font-size: var(--t-label); color: var(--fg-3); }
 .painel.fluxo .abas-cargo { justify-content: space-between; }
 .painel.fluxo .abas-cargo button { flex: 1; justify-content: center; padding: 0 8px; height: 36px; }
-.mapa-bloco { position: relative; border-radius: var(--raio); overflow: hidden; background: radial-gradient(110% 90% at 55% 50%, #F9F9F8, var(--bg) 65%, #EFEFED); border: 1px solid var(--line); }
+.mapa-bloco { position: relative; border-radius: var(--raio); overflow: hidden; background: radial-gradient(110% 90% at 55% 50%, #FCFDF7, var(--bg) 65%, #E5EEDD); border: 1px solid var(--line); }
 .mb-barra { position: absolute; left: 8px; right: 8px; top: 8px; z-index: 3; }
 .mb-barra .barra-mapa { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
 .mb-barra .legenda { display: none; }
@@ -66,7 +66,7 @@
 .tv-col .grow { overflow: hidden; }
 .tv-faixa { position: absolute; left: 24px; right: 24px; bottom: 22px; height: 52px; }
 .faixa-tv { display: flex; align-items: center; height: 100%; border-radius: 100px; background: rgba(255,255,255,.95); border: 1px solid var(--line); overflow: hidden; box-shadow: var(--sombra); }
-.fx-rotulo { flex: none; height: 100%; display: grid; place-items: center; padding: 0 22px; background: var(--fg); color: #FFF; font: 600 15px/1 var(--sans); border-radius: 100px; }
+.fx-rotulo { flex: none; height: 100%; display: grid; place-items: center; padding: 0 22px; background: var(--verde-escuro); color: var(--amarelo); font: 600 15px/1 var(--sans); border-radius: 100px; }
 .fx-janela { flex: 1; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
 .fx-trilho { display: inline-flex; gap: 40px; white-space: nowrap; animation: rolar linear infinite; padding-left: 20px; }
 .fx-item { font: 400 17px/1 var(--sans); color: var(--fg-2); }
