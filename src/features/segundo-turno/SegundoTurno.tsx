@@ -1,8 +1,9 @@
 // Página do 2º turno (25 de outubro): a disputa de presidente e as de governador, com o
 // resultado final do 1º turno como referência, e o caminho de volta para o painel completo do
-// 1º turno. Os resultados do 2º turno ainda não são coletados (docs/CONTINUIDADE.md).
+// 1º turno. Quando chega um lote oficial do 2º turno, passa à apuração ao vivo.
 
 import { useMemo } from 'react';
+import { ApuracaoSegundoTurno } from './ApuracaoSegundoTurno';
 import { useEstado } from '../../app/store';
 import { UF_NOME, useDeputadosBr } from '../../app/dados';
 import { Cabecalho } from '../../components/Cabecalho';
@@ -53,10 +54,18 @@ export function PaginaSegundoTurno({ layout, topo }: { layout: Layout; topo: num
 }
 
 export function SegundoTurno() {
+  const painel = useEstado((s) => s.painelSegundoTurno);
+  const modo = useEstado((s) => s.modo);
+  if (modo === 'oficial' && painel?.agora) return <ApuracaoSegundoTurno painel={painel} />;
+  return <AntesDaDivulgacao />;
+}
+
+function AntesDaDivulgacao() {
   const agora = useEstado((s) => s.agoraVivo);
   const cat = useEstado((s) => s.catalogo);
   const manifesto = useEstado((s) => s.manifesto);
   const modo = useEstado((s) => s.modo);
+  const erro = useEstado((s) => s.erroSegundoTurno);
   const navegar = useEstado((s) => s.navegar);
   const dep = useDeputadosBr();
   const pres = useMemo(() => (agora && cat ? presidenteNoSegundoTurno(agora, cat) : null), [agora, cat]);
@@ -86,7 +95,7 @@ export function SegundoTurno() {
           <h1 id="p2t-titulo" className="p2t-titulo">{titulo}</h1>
           {linhaFina && <p className="p2t-linha-fina">{linhaFina}</p>}
           <button className="btn amarelo p2t-cta" onClick={() => irAoPrimeiro({ cargo: 'presidente', uf: null, zz: false })}>Ver como foi o 1º turno <span aria-hidden="true">→</span></button>
-          {contagem?.encerrada && <p className="p2t-aviso">Os resultados do 2º turno ainda não estão neste painel; os números abaixo são do 1º turno.</p>}
+          {modo === 'oficial' && <p className="p2t-aviso" role="status">Aguardando divulgação oficial do TSE para o 2º turno. Os números abaixo são do 1º turno.</p>}
         </div>
         {contagem && !contagem.encerrada && (
           <p className="p2t-losango">
@@ -95,6 +104,7 @@ export function SegundoTurno() {
           </p>
         )}
       </section>
+      {erro && modo === 'oficial' && <p className="alerta-conexao" role="alert">{erro}</p>}
 
       {pres && (
         <div className="p2t-linha">

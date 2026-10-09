@@ -22,6 +22,7 @@ import { criarPresenca } from './presenca.mjs';
 import { criarPedidos } from './pedidos.mjs';
 import { criarFotos } from './fotos.mjs';
 import { criarSimulacao } from './simulacao.mjs';
+import { criarRotaSegundoTurno } from './segundo-turno.mjs';
 
 export async function criarApp({ raiz, producao = process.env.NODE_ENV === 'production' }) {
   const dirOficial = join(raiz, 'dados', 'publicado', 'oficial');
@@ -29,6 +30,7 @@ export async function criarApp({ raiz, producao = process.env.NODE_ENV === 'prod
   const presenca = criarPresenca();
   const pedidos = criarPedidos({ arquivo: process.env.PEDIDOS_ARQUIVO || join(raiz, 'dados', 'privado', 'pedidos.sqlite') });
   const fotos = criarFotos({ diretorio: join(raiz, 'dados-brutos', 'fotos') });
+  const segundoTurno = criarRotaSegundoTurno();
   const marca = JSON.parse(await readFile(join(raiz, 'config', 'marca.json'), 'utf8'));
   const geoMundo = existsSync(join(raiz, 'public', 'geo', 'mundo-v1.json')) ? JSON.parse(await readFile(join(raiz, 'public', 'geo', 'mundo-v1.json'), 'utf8')) : null;
 
@@ -100,6 +102,9 @@ export async function criarApp({ raiz, producao = process.env.NODE_ENV === 'prod
       if (m) return await fotos.tratar(req, res, m[1], m[2], m[3]);
 
       if (req.method !== 'GET' && req.method !== 'HEAD' && p.startsWith('/feed/')) return erro(req, res, 405, 'Somente leitura.');
+
+      m = /^\/feed\/oficial-2t\/(.+)$/.exec(p);
+      if (m) return await segundoTurno(req, res, m[1]);
 
       m = /^\/feed\/oficial\/arquivo\/(\d{1,4})\/(.+)$/.exec(p);
       if (m) {

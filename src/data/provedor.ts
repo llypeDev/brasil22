@@ -9,13 +9,14 @@ export class ErroFeed extends Error {
   }
 }
 
-export function baseDoModo(modo: Modo) {
+export function baseDoModo(modo: Modo, turno: 1 | 2 = 1) {
+  if (modo === 'oficial' && turno === 2) return '/feed/oficial-2t/';
   if (modo === 'oficial' || modo === 'simulacao') return `/feed/${modo}/`;
   return `/feed/cenario/${modo.replace('cenario-', '')}/`;
 }
 
-export function urlDe(modo: Modo, rel: string, t: number | null) {
-  return t == null ? `${baseDoModo(modo)}${rel}` : `${baseDoModo(modo)}arquivo/${Math.round(t)}/${rel}`;
+export function urlDe(modo: Modo, rel: string, t: number | null, turno: 1 | 2 = 1) {
+  return t == null ? `${baseDoModo(modo, turno)}${rel}` : `${baseDoModo(modo, turno)}arquivo/${Math.round(t)}/${rel}`;
 }
 
 const LIMITE = 80;

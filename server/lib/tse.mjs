@@ -9,6 +9,22 @@ export const CARGOS = { presidente: 1, governador: 3, senador: 5, depFederal: 6,
 
 export class ErroDeContrato extends Error {}
 
+/** Não usa cdt2 como resultado publicado: só aceita eleições explicitamente do turno pedido. */
+export function eleicaoDoCargo(config, cargo, turno = 1) {
+  if (![1, 2].includes(turno)) throw new ErroDeContrato('Turno inválido.');
+  for (const pleito of config.pl ?? []) {
+    if (pleito.c !== 'ele2026') continue;
+    for (const eleicao of pleito.e ?? []) {
+      if (Number(eleicao.t) !== turno) continue;
+      if ((eleicao.abr ?? []).some((a) => (a.cp ?? []).some((c) => Number(c.cd) === cargo))) {
+        if (!/^\d{4}$/.test(String(eleicao.cd))) throw new ErroDeContrato('Código de eleição inválido.');
+        return { cd: String(eleicao.cd), pleito: String(pleito.cd) };
+      }
+    }
+  }
+  return null;
+}
+
 const inteiro = (v, campo) => {
   if (v == null || v === '') return 0;
   const n = Number(v);
@@ -49,11 +65,11 @@ export const eleito = (codigo) => codigo === 'eleito' || codigo === 'eleito-qp' 
 /**
  * Lê um arquivo "-u.json" e devolve o resultado normalizado de uma abrangência.
  * @param {any} bruto conteúdo do arquivo
- * @param {{ cargo: number, abrangencia: string, eleicao?: string }} esperado
+ * @param {{ cargo: number, abrangencia: string, eleicao?: string, turno?: number }} esperado
  */
 export function lerResultado(bruto, esperado) {
   if (bruto?.f !== 'o') throw new ErroDeContrato('Arquivo fora da fase oficial.');
-  if (Number(bruto.t) !== 1) throw new ErroDeContrato('Turno inesperado.');
+  if (![1, 2].includes(esperado.turno ?? 1) || Number(bruto.t) !== (esperado.turno ?? 1)) throw new ErroDeContrato('Turno inesperado.');
   if (esperado.eleicao && String(bruto.ele) !== String(esperado.eleicao)) throw new ErroDeContrato('Eleição divergente.');
   const cd = String(bruto.cdabr ?? '').toLowerCase();
   const alvo = String(esperado.abrangencia).toLowerCase();

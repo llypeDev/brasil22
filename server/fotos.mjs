@@ -5,11 +5,14 @@
 import { mkdir, readFile, rename, writeFile, stat } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { erro } from './lib/http.mjs';
+import { eleicaoDoCargo } from './lib/tse.mjs';
+import { criarLeitorTse, CONFIG_ELEICOES } from './segundo-turno.mjs';
 
 const UFS = new Set('br ac al ap am ba ce df es go ma mt ms mg pa pb pr pe pi rj rn rs ro rr sc se sp to'.split(' '));
 const ELEICOES = new Set(['6257', '6259']);
 
 export function criarFotos({ diretorio, offline = process.env.FOTOS_OFFLINE === '1' }) {
+  const lerConfig = criarLeitorTse();
   const emVoo = new Map();
   const ausentes = new Set();
   async function obter(ele, uf, sq) {
@@ -35,8 +38,13 @@ export function criarFotos({ diretorio, offline = process.env.FOTOS_OFFLINE === 
   }
   return {
     async tratar(req, res, ele, uf, sq) {
-      if (!ELEICOES.has(ele) || !UFS.has(uf) || !/^\d{8,14}$/.test(sq)) return erro(req, res, 400, 'Foto inválida.');
+      if (!/^\d{4}$/.test(ele) || !UFS.has(uf) || !/^\d{8,14}$/.test(sq)) return erro(req, res, 400, 'Foto inválida.');
       try {
+        if (!ELEICOES.has(ele)) {
+          if (offline) return erro(req, res, 404, 'Foto indisponível.');
+          const config = await lerConfig(CONFIG_ELEICOES);
+          if (![1, 3].some((cargo) => eleicaoDoCargo(config ?? {}, cargo, 2)?.cd === ele)) return erro(req, res, 400, 'Eleição da foto inválida.');
+        }
         const buf = await obter(ele, uf, sq);
         if (!buf) return erro(req, res, 404, 'Foto indisponível.');
         res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=604800, immutable', 'X-Content-Type-Options': 'nosniff' });

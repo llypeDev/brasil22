@@ -8,6 +8,7 @@ import { atualizarAgora } from '../data/vivo';
 import type { Variante } from './layout';
 
 export function SeloModo({ variante }: { variante: Variante }) {
+  const segundo = useEstado((s) => s.nav.turno === 2 && s.modo === 'oficial');
   const modo = useEstado((s) => s.modo);
   const set = useEstado((s) => s.set);
   const conexao = useEstado((s) => s.conexao);
@@ -22,14 +23,14 @@ export function SeloModo({ variante }: { variante: Variante }) {
       <button className="selo-modo-botao" onClick={() => set({ metodologia: true })} aria-label={`${rotulo}. Abrir fonte e metodologia`}>
         <IconeInfo width={13} height={13} /><span>{rotulo}</span>
       </button>
-      {(conexao === 'reconectando' || conexao === 'sem-conexao') && (
+      {!segundo && (conexao === 'reconectando' || conexao === 'sem-conexao') && (
         <div className="alerta-conexao" role="alert">
           <b>{conexao === 'sem-conexao' ? 'Sem conexão com o servidor.' : 'Conexão instável.'}</b>
           <span>{ultimo ? ` Mantido o último dado válido (${ultimo}).` : ' Nenhum resultado exibido até a primeira resposta válida.'}{erro ? ` ${erro}` : ''}{proxima ? ` Nova tentativa em ${Math.max(1, Math.round((proxima - Date.now()) / 1000))} s.` : ''}</span>
           <button className="link" onClick={() => atualizarAgora()}>Tentar agora</button>
         </div>
       )}
-      {aviso && <div className="alerta-conexao aviso" role="status">{aviso}</div>}
+      {!segundo && aviso && <div className="alerta-conexao aviso" role="status">{aviso}</div>}
     </div>
   );
 }

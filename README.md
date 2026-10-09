@@ -4,9 +4,10 @@ Painel de apuração das eleições gerais de 4 de outubro de 2026 (1º turno): 
 Brasil, presidente, governadores, Senado, deputados federais, estaduais e distritais, zonas
 eleitorais, votos no exterior, linha do tempo e modo TV.
 
-Entre os turnos, o endereço principal abre a **página do 2º turno** (25 de outubro): a disputa de
-presidente e as 7 de governador, com o resultado final do 1º turno como referência, e o seletor
-**1º turno | 2º turno** no topo leva ao painel completo do 1º turno.
+O endereço principal abre a **página do 2º turno** (25 de outubro). Antes da divulgação, mostra
+os finalistas e o resultado do 1º turno como referência. Quando o TSE publicar os resultados,
+passa à apuração de presidente e dos sete governos, com votos, seções e consultas por município,
+zona e exterior. O seletor **1º turno | 2º turno** preserva o painel completo do 1º turno.
 
 Implementação própria em React 19 + TypeScript + Vite, com servidor Node sem dependências de
 execução (feeds, simulação, presença, pedidos e proxy de fotos). Os arquivos públicos de
@@ -84,13 +85,19 @@ arquivos estáticos da CDN, nos mesmos caminhos do servidor, sem função e sem 
 
 | Recurso | Na Vercel |
 |---|---|
-| Dados oficiais, mapa, cargos, 2º turno, exterior, linha do tempo | Arquivos estáticos (`dist/feed/`) |
+| Dados oficiais do 1º turno, mapa, cargos, exterior e linha do tempo | Arquivos estáticos (`dist/feed/oficial/`) |
+| Apuração do 2º turno | Função `api/segundo-turno.mjs`, consulta o TSE sob demanda, com cache de 15 s na CDN |
 | Fotos das candidaturas | Reescrita para o TSE (`/feed/fotos/*`) |
 | Simulação e cenários de teste, `/api/saude` | Função `api/servidor.mjs` (o próprio `server/app.mjs`), com o relógio da simulação ancorado no horário real (`SIM_ANCORA=0`) |
 | Presença ("pessoas agora") | Não existe: a aba para de enviar e o número não aparece |
 | Pedidos de acesso e de anúncio | Não existe: o formulário avisa que o envio está indisponível. Exige um banco persistente, que a função não tem |
 
-Dados novos (`npm run dados:tse:normalizar`) só aparecem depois de um novo deploy.
+O 1º turno exige novo deploy para republicar arquivos. O 2º turno se atualiza sem deploy: usa
+`/feed/oficial-2t/painel.json` e consultas por abrangência, com
+`Cache-Control: public, max-age=0, s-maxage=15, stale-while-revalidate=15`. Os códigos vêm de
+`ele-c.json`, somente das eleições com `t=2`; enquanto não forem publicadas, a tela aguarda.
+A função consulta apenas arquivos públicos de divulgação, com concorrência limitada, cache em
+memória e uma requisição em voo por arquivo. Ver [integração](docs/INTEGRACAO.md).
 
 ## Verificação
 
@@ -107,7 +114,7 @@ npm run test:e2e
 ```
 
 `npm test` roda os testes unitários (Vitest: fragmento da URL, cálculos, contratos do TSE,
-simulação, resumo do 2º turno). `npm run test:e2e` roda as jornadas T01–T16 e os contratos da API no Playwright: sobe
+simulação, resumo do 2º turno). `npm run test:e2e` roda as jornadas T01–T17 e os contratos da API no Playwright: sobe
 o servidor de desenvolvimento na porta 5190 com banco de pedidos temporário. O navegador vem de
 `npx playwright install chromium`; alternativas: `E2E_CANAL=chrome` (Chrome instalado) ou
 `E2E_CHROMIUM=/caminho/do/executavel`. `E2E_BASE=https://...` aponta outro servidor.
@@ -145,7 +152,7 @@ divulgação estão em [docs/INTEGRACAO.md](docs/INTEGRACAO.md). Fontes e licen�
 | `scripts` | coleta e normalização do TSE, geografia, zonas aproximadas, 2022, Senado, coletor ao vivo, capturas |
 | `config/marca.json` | título, autoria, redes, faixas e campanhas (padrões neutros de demonstração) |
 | `tests` | unitários (`tests/unit`) e ponta a ponta (`tests/e2e`) |
-| `docs` | pendências (o que falta fazer), checklist R01–R24/T01–T16, integração, diferenças restantes, assets, continuidade |
+| `docs` | pendências (o que falta fazer), checklist R01–R24/T01–T17, integração, diferenças restantes, assets, continuidade |
 
 ## Privacidade
 
@@ -156,3 +163,6 @@ divulgação estão em [docs/INTEGRACAO.md](docs/INTEGRACAO.md). Fontes e licen�
 - Não usamos o cadastro de candidaturas do TSE que contém CPF; do cadastro de locais de votação
   só são lidas coordenadas e contagens de eleitores (sem telefones ou endereços); da API do Senado,
   só nome, partido, UF e fim do mandato.
+
+A validação também roda em `.github/workflows/validar.yml`, com Node 22 e Chromium do
+Playwright, em pushes da branch do 2º turno e nas PRs para `main`.

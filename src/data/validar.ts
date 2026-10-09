@@ -1,7 +1,7 @@
 // Validação de ingestão no cliente. Uma resposta inválida é descartada e o painel mantém o
 // último snapshot válido, com aviso — nunca "conserta" números.
 
-import type { Agora, Colunar, Resultado } from './contratos';
+import type { Agora, Colunar, Resultado, PainelSegundoTurno, DetalheSegundoTurno, Candidato } from './contratos';
 
 export class ErroValidacao extends Error {}
 
@@ -37,6 +37,46 @@ export function validarAgora(bruto: unknown): Agora {
   a.presidente.zz ??= a.presidente.uf.ZZ;
   a.presidente.regioes ??= {};
   return a;
+}
+
+function validarCandidatos(candidatos: Candidato[]) {
+  if (!Array.isArray(candidatos) || candidatos.some((c) => !c || typeof c.n !== 'string' || typeof c.nome !== 'string' || typeof c.partido !== 'string' || !['valido', 'anulado'].includes(c.destino))) throw new ErroValidacao('Catálogo do 2º turno inválido');
+}
+
+export function validarPainelSegundoTurno(bruto: unknown): PainelSegundoTurno {
+  const p = bruto as PainelSegundoTurno;
+  if (p?.versao !== 1 || p.manifesto?.eleicao?.turno !== 2 || p.catalogo?.versao !== 1 || typeof p.aguardando !== 'boolean') throw new ErroValidacao('Painel do 2º turno inválido');
+  validarCandidatos(p.catalogo.presidente);
+  if (!p.catalogo.governador || !p.catalogo.senador || !p.catalogo.partidos) throw new ErroValidacao('Catálogo incompleto');
+  for (const candidatos of Object.values(p.catalogo.governador)) validarCandidatos(candidatos);
+  if (p.agora) {
+    validarAgora(p.agora);
+    if (p.agora.turno !== 2 || p.aguardando) throw new ErroValidacao('Lote de outro turno ou divulgação inconsistente');
+    validarResultado(p.agora.presidente.zz, 'presidente exterior');
+  } else if (!p.aguardando) throw new ErroValidacao('Resultado do 2º turno ausente');
+  return p;
+}
+
+export function validarDetalheSegundoTurno(bruto: unknown): DetalheSegundoTurno {
+  const d = bruto as DetalheSegundoTurno;
+  if (d?.versao !== 1 || d.turno !== 2) throw new ErroValidacao('Detalhe de outro turno');
+  validarResultado(d.resultado, '2º turno');
+  validarCandidatos(d.candidatos);
+  return d;
+}
+
+/** Uma UF atrasada não pode regredir só porque outro arquivo elevou a sequência do lote. */
+export function validarGeracaoSegundoTurno(novo: Resultado | undefined, anterior: Resultado | undefined, onde: string) {
+  if (anterior?.geradoEm && (!novo?.geradoEm || Date.parse(novo.geradoEm) < Date.parse(anterior.geradoEm))) throw new ErroValidacao(`${onde}: resultado anterior ao exibido`);
+}
+
+export function validarAtualizacaoSegundoTurno(novo: PainelSegundoTurno, anterior: PainelSegundoTurno | null) {
+  if (!anterior?.agora) return novo;
+  if (!novo.agora || !sequenciaAceita(anterior.agora.seq, novo.agora.seq, 'oficial')) throw new ErroValidacao('Lote anterior ao exibido');
+  validarGeracaoSegundoTurno(novo.agora.presidente.br, anterior.agora.presidente.br, 'Presidente Brasil');
+  validarGeracaoSegundoTurno(novo.agora.presidente.zz, anterior.agora.presidente.zz, 'Presidente exterior');
+  for (const cargo of ['presidente', 'governador'] as const) for (const [uf, r] of Object.entries(anterior.agora[cargo].uf)) validarGeracaoSegundoTurno(novo.agora[cargo].uf[uf], r, `${cargo} ${uf}`);
+  return novo;
 }
 
 export function validarColunar<T extends Colunar>(bruto: unknown, onde = 'coleção'): T {

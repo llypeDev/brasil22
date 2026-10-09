@@ -1,0 +1,39 @@
+name: Validar apuração
+
+on:
+  push:
+    branches: [codex/apuracao-segundo-turno]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    name: Tipos, testes e publicação
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          CI: 'true'
+      - run: npm run build:vercel
+      - name: Guardar evidências de falha
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidencias-playwright
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

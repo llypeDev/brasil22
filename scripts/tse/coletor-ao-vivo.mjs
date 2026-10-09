@@ -15,14 +15,19 @@ import { spawn } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { eleicaoDoCargo } from '../../server/lib/tse.mjs';
+import { CONFIG_ELEICOES, UFS_GOVERNADOR } from '../../server/segundo-turno.mjs';
+
+const TURNO = Number(process.argv.find((a) => a.startsWith('--turno='))?.split('=')[1] ?? 1);
+if (![1, 2].includes(TURNO)) throw new Error('Use --turno=1 ou --turno=2.');
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const BASE = 'https://resultados.tse.jus.br';
-const PUBLICADO = join(RAIZ, 'dados', 'publicado', 'oficial');
-const ARQUIVO = join(RAIZ, 'dados', 'arquivo-oficial');
-const ESTADO = join(RAIZ, 'dados-brutos', 'tse', 'estado-coletor.json');
+const PUBLICADO = join(RAIZ, 'dados', 'publicado', TURNO === 2 ? 'oficial-2t' : 'oficial');
+const ARQUIVO = join(RAIZ, 'dados', TURNO === 2 ? 'arquivo-oficial-2t' : 'arquivo-oficial');
+const ESTADO = join(RAIZ, 'dados-brutos', 'tse', TURNO === 2 ? 'estado-coletor-2t.json' : 'estado-coletor.json');
 const INTERVALO = Number(process.env.TSE_INTERVALO ?? 30) * 1000;
 const UFS = 'ac al ap am ba ce df es go ma mt ms mg pa pb pr pe pi rj rn rs ro rr sc se sp to'.split(' ');
-const CARGOS = [[1, '6257'], [3, '6259'], [5, '6259'], [6, '6259'], [7, '6259'], [8, '6259']];
+const CARGOS = TURNO === 2 ? [1, 3] : [1, 3, 5, 6, 7, 8];
 const pad = (n, w) => String(n).padStart(w, '0');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -60,8 +65,12 @@ async function arquivarAtual() {
 
 async function ciclo(estado) {
   const mudancas = [];
-  for (const [cargo, ele] of CARGOS) {
-    const abrs = cargo === 1 ? ['br', ...UFS, 'zz'] : cargo === 7 ? UFS.filter((u) => u !== 'df') : cargo === 8 ? ['df'] : UFS;
+  const config = (await geracao(`${BASE}/${CONFIG_ELEICOES}`))?.corpo;
+  if (!config) throw new Error('Configuração do TSE ausente.');
+  for (const cargo of CARGOS) {
+    const ele = eleicaoDoCargo(config, cargo, TURNO)?.cd;
+    if (!ele) throw new Error(`${TURNO}º turno ainda não publicado para cargo ${cargo}.`);
+    const abrs = cargo === 1 ? ['br', ...UFS, 'zz'] : TURNO === 2 ? UFS_GOVERNADOR.map((u) => u.toLowerCase()) : cargo === 7 ? UFS.filter((u) => u !== 'df') : cargo === 8 ? ['df'] : UFS;
     for (const uf of abrs) {
       const url = `${BASE}/oficial/ele2026/${ele}/dados/${uf}/${uf}-c${pad(cargo, 4)}-e${pad(ele, 6)}-u.json`;
       const g = await geracao(url);
@@ -74,21 +83,23 @@ async function ciclo(estado) {
 }
 
 async function principal() {
-  const estado = await lerJson(ESTADO, {});
+  let estado = await lerJson(ESTADO, {});
   console.log(`[coletor] ao vivo · intervalo ${INTERVALO / 1000}s`);
   let espera = INTERVALO;
   for (;;) {
     try {
-      const m = await ciclo(estado);
+      const novoEstado = { ...estado };
+      const m = await ciclo(novoEstado);
       if (m.length) {
         console.log(`[coletor] ${m.length} abrangências mudaram: ${m.slice(0, 8).map((x) => `${x.cargo}/${x.uf}`).join(' ')}${m.length > 8 ? '…' : ''}`);
         const cargosMun = [...new Set(m.filter((x) => [1, 3, 5].includes(x.cargo)).map((x) => x.cargo))];
         // rebaixa municipais dos cargos alterados (o coletor usa cache em disco; --forcar renova)
-        if (cargosMun.length) await rodar('scripts/tse/coletar.mjs', [`--cargos=${cargosMun.join(',')}`, '--forcar', '--zonas']);
+        if (cargosMun.length) await rodar('scripts/tse/coletar.mjs', [`--turno=${TURNO}`, `--cargos=${cargosMun.join(',')}`, '--forcar', '--zonas']);
         const outros = [...new Set(m.filter((x) => ![1, 3, 5].includes(x.cargo)).map((x) => x.cargo))];
-        if (outros.length) await rodar('scripts/tse/coletar.mjs', [`--cargos=${outros.join(',')}`, '--forcar']);
+        if (outros.length) await rodar('scripts/tse/coletar.mjs', [`--turno=${TURNO}`, `--cargos=${outros.join(',')}`, '--forcar']);
         await arquivarAtual();
-        await rodar('scripts/tse/normalizar.mjs');
+        await rodar('scripts/tse/normalizar.mjs', [`--turno=${TURNO}`]);
+        estado = novoEstado;
         await mkdir(dirname(ESTADO), { recursive: true });
         await writeFile(ESTADO, JSON.stringify(estado));
       } else {
