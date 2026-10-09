@@ -1,7 +1,7 @@
 // Retrato oficial (TSE) servido pelo proxy próprio; sem foto, iniciais na cor do partido.
 
 import { memo, useState } from 'react';
-import { partido } from '../data/partidos';
+import { partido, textoSobreCor } from '../data/partidos';
 import { iniciais } from '../data/formato';
 
 export type CargoFoto = 'presidente' | 'governador' | 'senador' | 'deputado';
@@ -30,7 +30,7 @@ export const Retrato = memo(function Retrato({ nome, sigla, sq, cargo, uf = null
   const url = urlFoto(cargo, uf, sq);
   const [falhou, setFalhou] = useState(false);
   const p = partido(sigla);
-  const estilo = { width: tamanho, height: tamanho, '--cor-partido': p.cor, '--cor-claro': p.claro } as React.CSSProperties;
+  const estilo = { width: tamanho, height: tamanho, '--cor-partido': p.cor, '--cor-sobre': textoSobreCor(p.cor), '--cor-claro': p.claro } as React.CSSProperties;
   const classe = `retrato ${forma} ${borda ? 'com-borda' : ''} ${className}`;
   if (!url || falhou) {
     return (

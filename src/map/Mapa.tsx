@@ -6,7 +6,7 @@ import { useMapa } from './api';
 import type { Dica, Rotulo } from './especificacao';
 import { useEstado } from '../app/store';
 import { Retrato } from '../components/Retrato';
-import { partido } from '../data/partidos';
+import { partido, textoSobreCor } from '../data/partidos';
 import { IconeGlobo } from '../components/Icones';
 import type { GeoBrasil } from './geo';
 
@@ -192,7 +192,7 @@ function Rotulos({ rotulos, motor, ouvintes, geo, escala, quadro }: PropsRotulos
       {rotulos.map((r) => {
         if (r.tipo === 'uf') {
           return (
-            <button key={r.id} ref={registrar(r.id)} className={`rotulo-uf ${r.fotos?.length ? 'com-fotos' : ''} ${r.chamada ? 'chamada' : ''} ${r.selecionado ? 'selecionado' : ''}`} style={{ '--cor': r.cor ?? '#555', '--cor-texto': r.corTexto ?? r.cor ?? '#333' } as React.CSSProperties} onClick={() => navegar({ uf: r.uf, zz: false, mun: null })} aria-label={r.aria}>
+            <button key={r.id} ref={registrar(r.id)} className={`rotulo-uf ${r.fotos?.length ? 'com-fotos' : ''} ${r.chamada ? 'chamada' : ''} ${r.selecionado ? 'selecionado' : ''}`} style={{ '--cor': r.cor ?? '#555', '--cor-sobre': textoSobreCor(r.cor ?? '#555'), '--cor-texto': r.corTexto ?? r.cor ?? '#333' } as React.CSSProperties} onClick={() => navegar({ uf: r.uf, zz: false, mun: null })} aria-label={r.aria}>
               {r.fotos?.length ? (
                 <span className="fotos">{r.fotos.map((f) => <Retrato key={f.sq ?? f.nome} nome={f.nome} sigla={f.sigla} sq={f.sq} cargo={f.cargo} uf={f.uf} tamanho={Math.round(26 * escala)} borda />)}</span>
               ) : null}
@@ -203,7 +203,7 @@ function Rotulos({ rotulos, motor, ouvintes, geo, escala, quadro }: PropsRotulos
         }
         if (r.tipo === 'exterior') {
           return (
-            <button key={r.id} ref={registrar(r.id)} className="rotulo-uf chamada exterior em-chamada" style={{ '--cor': r.cor } as React.CSSProperties} onClick={() => navegar({ zz: true, uf: null })} aria-label={r.aria}>
+            <button key={r.id} ref={registrar(r.id)} className="rotulo-uf chamada exterior em-chamada" style={{ '--cor': r.cor, '--cor-sobre': textoSobreCor(r.cor) } as React.CSSProperties} onClick={() => navegar({ zz: true, uf: null })} aria-label={r.aria}>
               <span className="uf"><IconeGlobo width={12} height={12} /></span><span className="valor tn">{r.valor}</span>
             </button>
           );

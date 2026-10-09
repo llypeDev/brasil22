@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140">
+  <title>Bandeira do Brasil</title>
+  <defs>
+    <clipPath id="globo"><circle cx="100" cy="70" r="35"/></clipPath>
+    <path id="faixa-texto" d="M64 61 Q100 53 136 82"/>
+    <path id="estrela" d="M0-2.4 .7-.7 2.3-.7 1.1.4 1.5 2.1 0 1.1-1.5 2.1-1.1.4-2.3-.7-.7-.7Z"/>
+  </defs>
+  <path fill="#009739" d="M0 0h200v140H0z"/>
+  <path fill="#FFDF00" d="m100 17 83 53-83 53-83-53Z"/>
+  <circle cx="100" cy="70" r="35" fill="#002776"/>
+  <g clip-path="url(#globo)">
+    <path d="M62 60 Q100 50 138 81" fill="none" stroke="#FFF" stroke-width="9"/>
+    <text fill="#007A3D" font-family="Arial, sans-serif" font-size="4.8" font-weight="700" letter-spacing=".7"><textPath href="#faixa-texto" startOffset="8%">ORDEM E PROGRESSO</textPath></text>
+    <g fill="#FFF">
+      <use href="#estrela" x="112" y="51"/>
+      <use href="#estrela" x="74" y="73"/><use href="#estrela" x="82" y="80"/>
+      <use href="#estrela" x="79" y="86"/><use href="#estrela" x="88" y="76"/>
+      <use href="#estrela" x="91" y="84"/><use href="#estrela" x="88" y="91"/>
+      <use href="#estrela" x="94" y="94"/><use href="#estrela" x="100" y="77"/>
+      <use href="#estrela" x="100" y="88"/><use href="#estrela" x="96" y="83"/>
+      <use href="#estrela" x="104" y="82"/><use href="#estrela" x="102" y="85"/>
+      <use href="#estrela" x="108" y="94"/><use href="#estrela" x="115" y="90"/>
+      <use href="#estrela" x="122" y="85"/><use href="#estrela" x="125" y="78"/>
+      <circle cx="72" cy="80" r=".8"/><circle cx="84" cy="69" r=".8"/>
+      <circle cx="85" cy="88" r=".8"/><circle cx="97" cy="72" r=".8"/>
+      <circle cx="107" cy="79" r=".8"/><circle cx="119" cy="78" r=".8"/>
+      <circle cx="118" cy="94" r=".8"/><circle cx="112" cy="98" r=".8"/>
+      <circle cx="103" cy="99" r=".8"/><circle cx="100" cy="96" r=".8"/>
+    </g>
+  </g>
+</svg>

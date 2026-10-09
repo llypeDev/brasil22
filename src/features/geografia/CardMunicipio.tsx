@@ -8,7 +8,7 @@ import { candidatosDe, useGeoBrasil, useMunicipios, usePresidente2022, useUfMuni
 import { useAgora } from '../../data/useFeed';
 import { abstencaoPct, brancosNulosPct, comparecimentoPct, fracaoSecoes, linhas, resultadoDoItem } from '../../data/calculos';
 import { compacto, num, pctS } from '../../data/formato';
-import { partido } from '../../data/partidos';
+import { partido, textoSobreCor } from '../../data/partidos';
 import { ListaCandidatos, Secao } from '../../components/Candidatos';
 import { Paginador, usePaginas } from '../../components/Composicao';
 import { Retrato } from '../../components/Retrato';
@@ -103,7 +103,7 @@ export function CardMunicipio() {
                 return (
                   <li key={z}>
                     <button aria-pressed={sel} onClick={() => navegar({ zona: sel ? null : String(Number(z)) })} aria-label={`Zona ${Number(z)}${l ? `: ${l.c.nome} ${pctS(l.parcela, 1)}` : ''}, ${pctS(fracaoSecoes(rz), 0)} das seções`}>
-                      <span className="chip-zona" style={{ background: l ? partido(l.c.partido).cor : '#CCC' }}>{Number(z)}</span>
+                      <span className="chip-zona" style={{ background: l ? partido(l.c.partido).cor : '#CCC', color: textoSobreCor(l ? partido(l.c.partido).cor : '#CCC') }}>{Number(z)}</span>
                       <span className="nome"><b>{Number(z)}ª zona</b><small className="tn">{rz ? `${compacto(rz.eleitorado)} eleitores` : ''}</small></span>
                       {l && <Retrato nome={l.c.nome} sigla={l.c.partido} sq={l.c.sq} cargo="presidente" tamanho={22} />}
                       <b className="tn" style={{ color: l ? partido(l.c.partido).texto : undefined }}>{l ? pctS(l.parcela, 1) : '—'}</b>

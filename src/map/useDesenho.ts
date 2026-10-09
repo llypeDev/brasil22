@@ -248,7 +248,7 @@ export function useDesenho(escalaPicos = 100) {
           rotulos.push({
             tipo: 'uf', id: u.uf, uf: u.uf, x: u.rotulo[0], y: u.rotulo[1], texto: u.uf,
             valor: senado ? '' : r.situacao === 'segundo-turno' ? '2T' : `${Math.round((ls[0].parcela ?? 0) * 100)}%`,
-            cor: partido(ls[0].c.partido).cor, chamada: CHAMADAS.includes(u.uf),
+            cor: partido(ls[0].c.partido).cor, corTexto: partido(ls[0].c.partido).texto, chamada: CHAMADAS.includes(u.uf),
             fotos: relevantes.map((l) => ({ nome: l.c.nome, sigla: l.c.partido, sq: l.c.sq, cargo: cargoUf, uf: u.uf })),
             aria: `${u.nome}, ${relevantes.map((l) => `${l.c.nome} ${pctS(l.parcela, 1)}`).join(', ')}`,
           });

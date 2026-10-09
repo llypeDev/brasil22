@@ -18,7 +18,7 @@ a { color: inherit; }
 img { display: block; }
 .tn { font-variant-numeric: tabular-nums; }
 .sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-::selection { background: rgba(30, 87, 201, .18); }
+::selection { background: var(--amarelo); color: var(--verde-escuro); }
 :focus-visible { outline: 2px solid var(--foco); outline-offset: 2px; border-radius: 6px; }
 * { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,.18) transparent; }
 
@@ -38,8 +38,8 @@ img { display: block; }
 .btn[disabled] { cursor: default; color: var(--fg-5); border-color: var(--line); background: var(--panel); }
 .btn.fantasma { border-color: transparent; background: none; color: var(--fg-3); }
 .btn.fantasma:hover { background: rgba(0,0,0,.05); color: var(--fg); }
-.btn.cheio { background: var(--fg); color: #FFF; border-color: var(--fg); }
-.btn.cheio:hover { background: #2A2A2A; }
+.btn.cheio { background: var(--verde); color: #FFF; border-color: var(--verde); }
+.btn.cheio:hover { background: var(--verde-escuro); border-color: var(--verde-escuro); }
 
 .icone {
   all: unset; cursor: pointer; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px;

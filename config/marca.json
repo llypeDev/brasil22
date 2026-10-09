@@ -31,7 +31,7 @@
       "modal": { "titulo": "Este espaço pode ser seu", "texto": "Campanha de demonstração. A arte, o destino e a vigência são configurados em config/marca.json.", "acao": "Quero anunciar" },
       "destino": null,
       "abre": "anuncio",
-      "cores": { "fundo": "#141414", "texto": "#F4F4F4", "destaque": "#F2B705" },
+      "cores": { "fundo": "#004D2B", "texto": "#F8FAF5", "destaque": "#FFDF00" },
       "vigencia": { "inicio": "2026-09-01", "fim": "2026-11-30" }
     }
   ]

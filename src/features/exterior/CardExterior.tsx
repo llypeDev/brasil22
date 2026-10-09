@@ -7,7 +7,7 @@ import { useExterior, useGeoMundo, usePresidente2022 } from '../../app/dados';
 import { useAgora } from '../../data/useFeed';
 import { fracaoSecoes, linhas, resultadoDoItem, somarItens } from '../../data/calculos';
 import { compacto, num, pctS, tituloLugar } from '../../data/formato';
-import { partido } from '../../data/partidos';
+import { partido, textoSobreCor } from '../../data/partidos';
 import { ListaCandidatos, Secao } from '../../components/Candidatos';
 import { Retrato } from '../../components/Retrato';
 import { IconeEsq, IconeFechar, IconeGlobo } from '../../components/Icones';
@@ -89,7 +89,7 @@ export function CardExterior() {
               return (
                 <li key={p.iso}>
                   <button onClick={() => navegar({ pais: p.iso })} aria-label={`${p.nome}: ${l ? `${l.c.nome} ${pctS(l.parcela, 1)}` : 'sem dados'}`}>
-                    <span className="chip-pais" style={{ background: l ? partido(l.c.partido).cor : '#CCC' }}>{p.iso}</span>
+                    <span className="chip-pais" style={{ background: l ? partido(l.c.partido).cor : '#CCC', color: textoSobreCor(l ? partido(l.c.partido).cor : '#CCC') }}>{p.iso}</span>
                     <span className="nome"><b>{p.nome}</b><small className="tn">{p.idx.length} {p.idx.length === 1 ? 'cidade' : 'cidades'} · {compacto(p.r?.eleitorado)} eleitores</small></span>
                     {l && <Retrato nome={l.c.nome} sigla={l.c.partido} sq={l.c.sq} cargo="presidente" tamanho={22} />}
                     <b className="tn" style={{ color: l ? partido(l.c.partido).texto : undefined }}>{l ? pctS(l.parcela, 1) : '—'}</b>
@@ -109,7 +109,7 @@ export function CardExterior() {
               return (
                 <li key={c.tse}>
                   <button onClick={() => navegar({ cidade: c.tse, pais: c.pais })} aria-label={`${tituloLugar(c.nome)}: ${l ? `${l.c.nome} ${pctS(l.parcela, 1)}` : 'sem dados'}`}>
-                    <span className="chip-pais" style={{ background: l ? partido(l.c.partido).cor : '#CCC' }}>{c.pais}</span>
+                    <span className="chip-pais" style={{ background: l ? partido(l.c.partido).cor : '#CCC', color: textoSobreCor(l ? partido(l.c.partido).cor : '#CCC') }}>{c.pais}</span>
                     <span className="nome"><b>{tituloLugar(c.nome)}</b><small className="tn">{f ? `fecha às ${f.texto}` : ''} · {compacto(rc?.eleitorado)} eleitores</small></span>
                     {l && <Retrato nome={l.c.nome} sigla={l.c.partido} sq={l.c.sq} cargo="presidente" tamanho={22} />}
                     <b className="tn" style={{ color: l ? partido(l.c.partido).texto : undefined }}>{l ? pctS(l.parcela, 1) : '—'}</b>

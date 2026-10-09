@@ -14,7 +14,10 @@ export const ROTULO_CARGO: Record<Cargo, string> = { presidente: 'Presidente', g
 export function Marca({ compacta = false }: { compacta?: boolean }) {
   return (
     <div className="marca">
-      <b>{MARCA.titulo}</b>
+      <span className="marca-identidade">
+        <img className="marca-bandeira" src="/bandeira-brasil.svg" alt="Bandeira do Brasil" width="40" height="28" />
+        <b>{MARCA.titulo}</b>
+      </span>
       {!compacta && MARCA.autoria?.nome && (
         MARCA.autoria.url
           ? <a className="autoria" href={MARCA.autoria.url} target="_blank" rel="noopener noreferrer">{MARCA.autoria.rotulo} {MARCA.autoria.nome}</a>

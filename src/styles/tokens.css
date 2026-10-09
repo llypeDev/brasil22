@@ -1,32 +1,32 @@
-/* Tokens do tema claro.
-   Paleta amostrada das imagens de referência fornecidas pelo responsável:
-   1.PNG (Statista) — fundo #F8F8F8, faixas #ECECEC, grade #D4D4D4, texto #444;
-   2.PNG (BBC)      — fundo #F4F4F4, azul #1E57C9, vermelho #D82121, cinza #A8A8A8, texto #000/#505050.
-   Medidas e escala tipográfica seguem o plano (seção 4). */
+/* Tema claro inspirado na bandeira do Brasil.
+   Verde nas ações e amarelo nos destaques; tons escuros para texto legível. */
 
 :root {
   color-scheme: light;
-  --bg: #F4F4F4;
-  --bg-2: #F8F8F8;
-  --faixa: #ECECEC;
-  --grade: #D4D4D4;
+  --bg: #F2F6EF;
+  --bg-2: #F8FAF5;
+  --faixa: #E7EFDF;
+  --grade: #D0DDCD;
   --panel: #FFFFFF;
-  --panel-2: #FAFAF9;
-  --panel-3: #EFEFED;
+  --panel-2: #FAFCF7;
+  --panel-3: #EAF1E5;
   --glass: rgba(255, 255, 255, 0.9);
-  --fg: #111111;
-  --fg-2: #2E2E2E;
-  --fg-3: #505050;
-  --fg-4: #6B6B6B;
-  --fg-5: #8E8E8E;
-  --line: rgba(17, 17, 17, 0.08);
-  --line-2: rgba(17, 17, 17, 0.14);
-  --line-3: rgba(17, 17, 17, 0.24);
-  --azul: #1E57C9;
-  --vermelho: #D82121;
+  --fg: #17291D;
+  --fg-2: #2D4233;
+  --fg-3: #4A6050;
+  --fg-4: #637266;
+  --fg-5: #737F76;
+  --line: rgba(0, 77, 43, 0.10);
+  --line-2: rgba(0, 77, 43, 0.18);
+  --line-3: rgba(0, 77, 43, 0.30);
+  --verde: #007A3D;
+  --verde-escuro: #004D2B;
+  --verde-suave: #E3F0E3;
+  --amarelo: #FFDF00;
+  --amarelo-texto: #7A5D00;
   --cinza: #A8A8A8;
   --sem-dados: #DCDCDA;
-  --foco: #1E57C9;
+  --foco: var(--verde);
 
   --serif: "Faustina", Georgia, "Times New Roman", serif;
   --sans: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
