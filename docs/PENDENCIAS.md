@@ -117,9 +117,10 @@ remover o recurso. **Decisão do responsável.**
 - **Proteção de deploy:** todos os endereços `*.vercel.app` do projeto pedem login da Vercel.
   Para o público ver, configurar um domínio de produção ou ajustar *Settings → Deployment
   Protection*. Feito pelo responsável, no painel da Vercel.
-- **CI:** o repositório não tem GitHub Actions; os testes rodam só localmente. Os minutos do mês
-  do responsável acabaram. Quando houver minutos, um fluxo leve com typecheck e testes
-  unitários já ajuda.
+- ~~Criar CI no GitHub Actions.~~ Implementado em `.github/workflows/validar.yml`, com
+  Node 22, `npm run typecheck`, 54 testes unitários, 20 testes E2E com Chromium e
+  `npm run build:vercel`. O fluxo valida a branch de implementação do 2º turno e as PRs
+  para `main`; a execução da PR #5 passou em 09/10/2026.
 - Menor: na Vercel, o instante final exato da linha do tempo
   (`/feed/oficial/arquivo/{t final}/…`) não existe como arquivo e cai na série nacional. A linha
   do tempo já leva o instante final para "ao vivo", então só um link direto com `~t…` sente.
