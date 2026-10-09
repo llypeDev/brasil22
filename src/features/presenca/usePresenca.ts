@@ -1,6 +1,7 @@
 // Presença: heartbeat para o serviço próprio (/api/vivo) com identificador efêmero da aba.
 // Pausa em aba oculta; avisa a saída ao fechar. O número exibido é o do servidor — nunca
-// um valor fixo ou simulado.
+// um valor fixo ou simulado. Hospedagem sem o serviço (ex.: Vercel estática) responde 404,
+// 405 ou 501: a aba para de enviar e o número não aparece.
 
 import { useEffect } from 'react';
 import { useEstado } from '../../app/store';
@@ -27,11 +28,12 @@ export function usePresenca() {
           useEstado.getState().set({ pessoas: j.pessoas });
           intervalo = (j.intervaloSegundos ?? 20) * 1000;
         } else if (r.status === 429) intervalo = 60_000;
+        else if (r.status === 404 || r.status === 405 || r.status === 501) { parado = true; return; }
       } catch { /* sem rede: tenta no próximo ciclo */ }
       timer = setTimeout(enviar, intervalo);
     };
     const visivel = () => { if (!document.hidden) { if (timer) clearTimeout(timer); void enviar(); } };
-    const sair = () => { try { navigator.sendBeacon?.('/api/vivo', new Blob([JSON.stringify({ id, saindo: true })], { type: 'application/json' })); } catch { /* ignora */ } };
+    const sair = () => { if (parado) return; try { navigator.sendBeacon?.('/api/vivo', new Blob([JSON.stringify({ id, saindo: true })], { type: 'application/json' })); } catch { /* ignora */ } };
     document.addEventListener('visibilitychange', visivel);
     window.addEventListener('pagehide', sair);
     void enviar();

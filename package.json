@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "build:vercel": "npm run build && node scripts/vercel/estatico.mjs",
     "start": "node --env-file-if-exists=.env server/index.mjs",
     "preview": "npm run build && npm start",
     "test": "vitest run",

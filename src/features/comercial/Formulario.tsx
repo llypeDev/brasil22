@@ -42,6 +42,8 @@ export function Formulario() {
       if (r.ok && j.ok) { setEstado({ fase: 'enviado' }); return; }
       if (r.status === 400) setEstado({ fase: 'erro', campos: j.campos ?? {}, mensagem: j.erro ?? 'Confira os campos.' });
       else if (r.status === 429) setEstado({ fase: 'erro', mensagem: `${j.erro ?? 'Muitos pedidos em pouco tempo.'} ${j.esperarSegundos ? `Tente de novo em ${Math.ceil(j.esperarSegundos / 60)} min.` : 'Tente de novo mais tarde.'}` });
+      // sem o serviço de pedidos nesta hospedagem (ex.: Vercel estática), tentar de novo não adianta
+      else if (r.status === 404 || r.status === 405 || r.status === 501) setEstado({ fase: 'erro', mensagem: 'O envio de pedidos está indisponível neste endereço por enquanto.' });
       else setEstado({ fase: 'erro', mensagem: j.erro ?? 'Não foi possível registrar agora. Tente novamente.' });
     } catch {
       setEstado({ fase: 'erro', mensagem: 'Sem conexão. Seus dados continuam aqui; tente de novo.' });

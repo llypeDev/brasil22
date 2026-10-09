@@ -89,7 +89,10 @@ function resultado(acc, pk, extra = {}) {
   };
 }
 
-export async function criarSimulacao({ diretorio, geoMundo, velocidade = Number(process.env.SIM_VELOCIDADE ?? 10), tFixo = process.env.SIM_T_FIXO }) {
+// `ancora` é o instante real (ms) em que o relógio simulado está no início do ciclo. O padrão é
+// a carga do processo; em funções sem servidor (Vercel), SIM_ANCORA=0 faz todas as instâncias
+// mostrarem o mesmo instante, porque o relógio passa a depender só do horário real.
+export async function criarSimulacao({ diretorio, geoMundo, velocidade = Number(process.env.SIM_VELOCIDADE ?? 10), tFixo = process.env.SIM_T_FIXO, ancora = process.env.SIM_ANCORA ? Number(process.env.SIM_ANCORA) : Date.now() }) {
   const inicioCarga = Date.now();
   const lerJson = async (rel) => JSON.parse(await readFile(join(diretorio, rel), 'utf8'));
   if (!existsSync(join(diretorio, 'manifesto.json'))) throw new Error('Dados oficiais ausentes: rode npm run dados:tse:normalizar.');
@@ -402,7 +405,7 @@ export async function criarSimulacao({ diretorio, geoMundo, velocidade = Number(
   }
 
   // ---------- relógio ----------
-  const inicioReal = Date.now();
+  const inicioReal = ancora;
   let fixo = tFixo != null && tFixo !== '' ? Number(tFixo) : null;
   let vel = velocidade;
   const relogio = () => {
