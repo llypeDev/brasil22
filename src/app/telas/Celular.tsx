@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useEstado } from '../store';
 import { Mapa } from '../../map/Mapa';
 import { BarraMapa, ControlesZoom } from '../../map/BarraMapa';
-import { AbasCargo, BotaoBusca, IndicadorVivo, Marca, compartilhar } from '../../components/Cabecalho';
+import { AbasCargo, AbasTurno, BotaoBusca, IndicadorVivo, Marca, compartilhar } from '../../components/Cabecalho';
 import { LinhaDoTempo } from '../../features/linha-do-tempo/LinhaDoTempo';
 import { CardAnuncio } from '../../features/comercial/CardAnuncio';
 import { ColunaDireita, ColunaEsquerda } from './Colunas';
@@ -15,22 +15,30 @@ import { num } from '../../data/formato';
 import type { Layout } from '../layout';
 import { SeloModo } from '../SeloModo';
 
-function CabecalhoCelular() {
+export function CabecalhoCelular() {
   const zz = useEstado((s) => s.nav.zz);
+  const primeiro = useEstado((s) => s.nav.turno === 1);
   const navegar = useEstado((s) => s.navegar);
   const pessoas = useEstado((s) => s.pessoas);
   return (
     <header className="topo-celular">
       <div className="tc-linha">
         <Marca />
-        <BotaoBusca compacto />
+        <span className="tc-acoes">
+          <BotaoBusca compacto />
+          {!primeiro && <button className="icone grande" onClick={compartilhar} aria-label="Compartilhar esta vista"><IconeCompartilhar /></button>}
+        </span>
       </div>
-      <div className="tc-linha">
-        <IndicadorVivo curto />
-        {pessoas != null && <span className="tc-pessoas" aria-label={`${pessoas} pessoas agora`}><IconeOlho width={14} height={14} /> <b className="tn">{num(pessoas)}</b></span>}
-        <button className="btn exterior" aria-pressed={zz} onClick={() => navegar(zz ? { zz: false } : { cargo: 'presidente', zz: true })} aria-label="Ver os votos do exterior"><IconeGlobo />Exterior</button>
-        <button className="icone grande" onClick={compartilhar} aria-label="Compartilhar esta vista"><IconeCompartilhar /></button>
-      </div>
+      {/* indicador do lote, exterior e presença são do painel do 1º turno */}
+      {primeiro && (
+        <div className="tc-linha">
+          <IndicadorVivo curto />
+          {pessoas != null && <span className="tc-pessoas" aria-label={`${pessoas} pessoas agora`}><IconeOlho width={14} height={14} /> <b className="tn">{num(pessoas)}</b></span>}
+          <button className="btn exterior" aria-pressed={zz} onClick={() => navegar(zz ? { zz: false } : { cargo: 'presidente', zz: true })} aria-label="Ver os votos do exterior"><IconeGlobo />Exterior</button>
+          <button className="icone grande" onClick={compartilhar} aria-label="Compartilhar esta vista"><IconeCompartilhar /></button>
+        </div>
+      )}
+      <AbasTurno largo />
     </header>
   );
 }

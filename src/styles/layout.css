@@ -21,8 +21,10 @@
 .topo .marca { flex: 0 0 336px; }
 .topo-centro { display: flex; align-items: center; gap: 12px; }
 .topo-dir { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-@container (max-width: 1520px) { .tvb .lbl, .botao-busca kbd, .vivo .lt { display: none; } .tvb { width: 36px; padding: 0; } }
-@container (max-width: 1220px) { .marca .autoria, .exterior .lbl, .botao-busca > span { display: none; } .topo .marca { flex-basis: auto; } .exterior { width: 36px; padding: 0; } .botao-busca { padding: 0 10px; } }
+/* limites medidos com as abas de turno no cabeçalho (cerca de 150 px a mais que sem elas) */
+@container (max-width: 1640px) { .tvb .lbl, .botao-busca kbd, .vivo .lt { display: none; } .tvb { width: 36px; padding: 0; } }
+@container (max-width: 1360px) { .marca .autoria, .exterior .lbl, .botao-busca > span { display: none; } .topo .marca { flex-basis: auto; } .exterior { width: 36px; padding: 0; } .botao-busca { padding: 0 10px; } }
+@container (max-width: 1100px) { .abas-turno .lbl-turno { display: none; } }
 
 .col { position: absolute; display: flex; flex-direction: column; gap: var(--gap); bottom: 20px; z-index: 3; min-height: 0; }
 .col > * { flex: none; }

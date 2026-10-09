@@ -4,6 +4,10 @@ Painel de apuração das eleições gerais de 4 de outubro de 2026 (1º turno): 
 Brasil, presidente, governadores, Senado, deputados federais, estaduais e distritais, zonas
 eleitorais, votos no exterior, linha do tempo e modo TV.
 
+Entre os turnos, o endereço principal abre a **página do 2º turno** (25 de outubro): a disputa de
+presidente e as 7 de governador, com o resultado final do 1º turno como referência, e o seletor
+**1º turno | 2º turno** no topo leva ao painel completo do 1º turno.
+
 Implementação própria em React 19 + TypeScript + Vite, com servidor Node sem dependências de
 execução (feeds, simulação, presença, pedidos e proxy de fotos). Os arquivos públicos de
 divulgação do TSE são coletados, validados e normalizados num feed próprio; a interface não
@@ -48,6 +52,8 @@ O modo em uso fica sempre identificado no selo do canto da tela, que abre a meto
 (município, código IBGE), `#presidente-mg-3106200-z26` (zona), `#presidente-zz-pt` (país),
 `#presidente-zz-29955` (cidade do exterior, código TSE). Sufixos: `~e` estados, `~v` vantagem,
 `~a` apurado, `~c13` mapa de uma candidatura, `~t1800` instante passado (18h00), `~tv` modo TV.
+Todas essas rotas são do 1º turno. `#2turno` é a página do 2º turno, que também abre quando o
+endereço não tem fragmento (só com os dados oficiais; simulação e cenários abrem no 1º turno).
 Fragmentos inválidos voltam ao estado válido mais próximo.
 
 Atalhos: `Ctrl/Cmd+K` ou `/` busca · `1`–`4` cargo · `+` `−` `0` zoom · `Esc` fecha a camada de
@@ -85,7 +91,7 @@ npm run test:e2e
 ```
 
 `npm test` roda os testes unitários (Vitest: fragmento da URL, cálculos, contratos do TSE,
-simulação). `npm run test:e2e` roda as jornadas T01–T15 e os contratos da API no Playwright: sobe
+simulação, resumo do 2º turno). `npm run test:e2e` roda as jornadas T01–T16 e os contratos da API no Playwright: sobe
 o servidor de desenvolvimento na porta 5190 com banco de pedidos temporário. O navegador vem de
 `npx playwright install chromium`; alternativas: `E2E_CANAL=chrome` (Chrome instalado) ou
 `E2E_CHROMIUM=/caminho/do/executavel`. `E2E_BASE=https://...` aponta outro servidor.
@@ -117,7 +123,7 @@ divulgação estão em [docs/INTEGRACAO.md](docs/INTEGRACAO.md). Fontes e licen�
 |---|---|
 | `src/app` | estado (zustand), URL e histórico, layout por variante (desktop, TV, tablet, celular vertical e horizontal), atalhos |
 | `src/map` | motor de mapa em Canvas 2D (Path2D, câmera, teste de clique, zoom/arraste/pinça), rótulos e chamadas em DOM |
-| `src/features` | cards de cada vista: presidente, governadores, Senado, deputados, UF, município, zona, exterior, perfil, busca, linha do tempo, TV, comercial |
+| `src/features` | cards de cada vista: presidente, governadores, Senado, deputados, UF, município, zona, exterior, perfil, busca, linha do tempo, TV, comercial, página do 2º turno |
 | `src/data` | contratos do feed, cálculos, validação, provedor com cache e consulta ao vivo |
 | `server` | servidor próprio: feeds oficial/simulação/cenários, presença, pedidos (SQLite), fotos |
 | `scripts` | coleta e normalização do TSE, geografia, zonas aproximadas, 2022, Senado, coletor ao vivo, capturas |

@@ -12,6 +12,7 @@ import './styles/componentes.css';
 import './styles/cargos.css';
 import './styles/sobreposicoes.css';
 import './styles/telas.css';
+import './styles/segundo-turno.css';
 import { App } from './app/App';
 
 const raiz = document.getElementById('raiz')!;

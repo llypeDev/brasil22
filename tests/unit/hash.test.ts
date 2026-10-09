@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parseHash, serializeHash, ESTADO_INICIAL, type EstadoUrl } from '../../src/app/hash';
+import { normalizarNav } from '../../src/app/store';
 
 const ida = (h: string) => serializeHash(parseHash(h));
 
@@ -44,5 +45,39 @@ describe('parseHash / serializeHash', () => {
   it('serializa somente o estado de navegação', () => {
     const e: EstadoUrl = { ...ESTADO_INICIAL, cargo: 'senado', uf: 'BA' };
     expect(serializeHash(e)).toBe('#senado-ba');
+  });
+});
+
+describe('turno', () => {
+  it('#2turno abre a página do 2º turno; as demais rotas são do 1º', () => {
+    expect(parseHash('#2turno').turno).toBe(2);
+    expect(parseHash('#segundo-turno').turno).toBe(2);
+    expect(parseHash('#2T').turno).toBe(2);
+    expect(ida('#2turno')).toBe('#2turno');
+    expect(serializeHash({ ...ESTADO_INICIAL, turno: 2, cargo: 'senado', uf: 'BA' })).toBe('#2turno');
+    expect(parseHash('#governadores-rj', {}, 2)).toMatchObject({ turno: 1, cargo: 'governadores', uf: 'RJ' });
+    // fragmento inválido continua voltando ao presidente do 1º turno
+    expect(parseHash('#nada', {}, 2)).toEqual(ESTADO_INICIAL);
+  });
+
+  it('o turno padrão vale só para o endereço sem fragmento', () => {
+    expect(parseHash('', {}, 2)).toEqual({ ...ESTADO_INICIAL, turno: 2 });
+    expect(parseHash('#', {}, 2).turno).toBe(2);
+    expect(parseHash('').turno).toBe(1);
+  });
+
+  it('navegar por cargo, lugar, camada ou TV sai do 2º turno', () => {
+    const noSegundo: EstadoUrl = { ...ESTADO_INICIAL, turno: 2 };
+    expect(normalizarNav(noSegundo, { cargo: 'senado' })).toMatchObject({ turno: 1, cargo: 'senado' });
+    expect(normalizarNav(noSegundo, { uf: 'MG' })).toMatchObject({ turno: 1, uf: 'MG' });
+    expect(normalizarNav(noSegundo, { tv: true })).toMatchObject({ turno: 1, tv: true });
+    expect(normalizarNav(noSegundo, { turno: 1, cargo: 'governadores', uf: 'RJ' })).toMatchObject({ turno: 1, cargo: 'governadores', uf: 'RJ' });
+  });
+
+  it('trocar só o turno preserva o ponto do 1º turno e limpa TV e instante', () => {
+    const antes: EstadoUrl = { ...ESTADO_INICIAL, cargo: 'governadores', uf: 'RJ', camada: 'apur', t: 1200, tv: true };
+    const segundo = normalizarNav(antes, { turno: 2 });
+    expect(segundo).toMatchObject({ turno: 2, tv: false, t: null, cargo: 'governadores', uf: 'RJ', camada: 'apur' });
+    expect(serializeHash(normalizarNav(segundo, { turno: 1 }))).toBe('#governadores-rj~a');
   });
 });

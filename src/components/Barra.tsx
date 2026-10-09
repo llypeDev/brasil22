@@ -10,19 +10,21 @@ interface Props {
   rotulo?: string;
   altura?: number;
   marca50?: boolean;
+  /** "span" dentro de botões, onde <div> não é permitido */
+  como?: 'div' | 'span';
 }
 
-export function BarraDupla({ esq, dir, rotulo, altura = 6, marca50 = true }: Props) {
+export function BarraDupla({ esq, dir, rotulo, altura = 6, marca50 = true, como: Elemento = 'div' }: Props) {
   const a = Math.max(0, Math.min(1, esq?.parcela ?? 0));
   const b = Math.max(0, Math.min(1 - a, dir?.parcela ?? 0));
   const desc = rotulo ?? `${esq ? `${esq.nome} ${pctS(esq.parcela)}` : ''}${dir ? `, ${dir.nome} ${pctS(dir.parcela)}` : ''}; a linha do meio marca 50% dos votos válidos`;
   return (
-    <div className="barra-dupla" role="img" aria-label={desc} style={{ height: altura }}>
+    <Elemento className="barra-dupla" role="img" aria-label={desc} style={{ height: altura }}>
       <i className="esq" style={{ width: `${a * 100}%`, background: esq ? partido(esq.sigla).cor : 'transparent' }} />
       <i className="meio" />
       <i className="dir" style={{ width: `${b * 100}%`, background: dir ? partido(dir.sigla).cor : 'transparent' }} />
       {marca50 && <em className="marca50" />}
-    </div>
+    </Elemento>
   );
 }
 

@@ -1,4 +1,4 @@
-# Checklist R01–R24 e T01–T15
+# Checklist R01–R24 e T01–T16
 
 Estado em 08/10/2026. **Feito** = implementado e verificado na interface (painel do navegador e/ou
 Playwright); **Feito\*** = feito com diferença ou limite registrado em
@@ -55,12 +55,13 @@ também percorridas manualmente no painel do navegador.
 | T13 | Pedido inválido, 429, sucesso | Feito | erro por campo, "Pedido recebido" só com a linha gravada no banco, limite por e-mail com prazo |
 | T14 | Entrar na TV → roteiro → sair | Feito | troca de cena sozinha sem empilhar histórico; Esc volta ao contexto anterior |
 | T15 | Rotacionar celular | Feito | retrato ↔ paisagem sem rolagem lateral, zoom desobstruído, mapa clicável após cada giro |
+| T16 | Página do 2º turno ↔ 1º turno | Feito | sem fragmento abre o 2º turno (duelo, 7 governos); estado da grade abre o mapa do 1º turno e voltar retorna; seletor de turno, Esc e atalho de cargo; capturas 30, 31 |
 
 ## Verificações de build
 
 | Comando | Resultado |
 |---|---|
 | `npm run typecheck` | sem erros |
-| `npm test` | 34 testes passando |
+| `npm test` | 45 testes passando |
 | `npm run build` | build de produção gerado |
-| `npm run test:e2e` | jornadas T01–T15 e contratos da API passando (Chromium headless) |
+| `npm run test:e2e` | jornadas T01–T16 e contratos da API passando (Chromium headless) |
