@@ -8,13 +8,17 @@
 //   #presidente-zz-pt               país (ISO 3166-1 alfa-2)
 //   #presidente-zz-29955            cidade do exterior (código TSE)
 //   sufixos: ~e estados · ~v vantagem · ~a apurado · ~c13 candidato · ~tv modo TV · ~t2055 instante
+//   #2turno                         página do 2º turno (as rotas acima são todas do 1º turno)
 //
 // Perfis, listas e modais são estados temporários e não entram no fragmento.
 
 export type Cargo = 'presidente' | 'governadores' | 'senado' | 'deputados';
 export type Camada = 'mun' | 'uf' | 'votes' | 'apur' | 'cand';
+export type Turno = 1 | 2;
 
 export interface EstadoUrl {
+  /** 1 = painel do 1º turno (mapa, cargos, lugares); 2 = página do 2º turno */
+  turno: Turno;
   cargo: Cargo;
   uf: string | null;
   mun: string | null;
@@ -29,7 +33,7 @@ export interface EstadoUrl {
   t: number | null;
 }
 
-export const ESTADO_INICIAL: EstadoUrl = { cargo: 'presidente', uf: null, mun: null, zona: null, zz: false, pais: null, cidade: null, camada: 'mun', cand: null, tv: false, t: null };
+export const ESTADO_INICIAL: EstadoUrl = { turno: 1, cargo: 'presidente', uf: null, mun: null, zona: null, zz: false, pais: null, cidade: null, camada: 'mun', cand: null, tv: false, t: null };
 
 export const CARGOS: Cargo[] = ['presidente', 'governadores', 'senado', 'deputados'];
 
@@ -44,10 +48,14 @@ export interface Validadores {
 
 const UFS = new Set('AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SE SP TO'.split(' '));
 
-export function parseHash(hash: string, v: Validadores = {}): EstadoUrl {
+const SEGUNDO_TURNO = new Set(['2turno', '2t', 'segundo-turno']);
+
+/** `turnoPadrao` vale só para o fragmento vazio; qualquer rota com cargo é do 1º turno. */
+export function parseHash(hash: string, v: Validadores = {}, turnoPadrao: Turno = 1): EstadoUrl {
   const bruto = decodeURIComponent(hash.replace(/^#/, '')).trim().toLowerCase();
   const e: EstadoUrl = { ...ESTADO_INICIAL };
-  if (!bruto) return e;
+  if (!bruto) return { ...e, turno: turnoPadrao };
+  if (SEGUNDO_TURNO.has(bruto)) return { ...e, turno: 2 };
   const [caminho, ...sufixos] = bruto.split('~');
   const partes = caminho.split('-').filter(Boolean);
   const cargo = partes.shift();
@@ -97,6 +105,7 @@ export function parseHash(hash: string, v: Validadores = {}): EstadoUrl {
 }
 
 export function serializeHash(e: EstadoUrl): string {
+  if (e.turno === 2) return '#2turno';
   let s = e.cargo;
   if (e.zz && e.cargo === 'presidente') {
     s += '-zz';

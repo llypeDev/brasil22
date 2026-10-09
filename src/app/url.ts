@@ -1,22 +1,18 @@
 // Sincronização entre o estado de navegação e a URL (fragmento) com back/forward coerentes.
-// Mudanças de escopo (cargo, UF, município, zona, exterior) criam entrada no histórico;
+// Mudanças de escopo (turno, cargo, UF, município, zona, exterior) criam entrada no histórico;
 // camada, instante e TV substituem a entrada atual.
 
 import { useEstado } from './store';
 import { parseHash, serializeHash, type EstadoUrl, type Validadores } from './hash';
+import { turnoPadrao } from './modo';
 import type { Modo } from '../data/contratos';
+
+export { lerModoDaUrl } from './modo';
 
 let validadoresAtuais: () => Validadores = () => ({});
 let aplicandoDaUrl = false;
 
-const escopo = (e: EstadoUrl) => [e.cargo, e.uf, e.mun, e.zona, e.zz, e.pais, e.cidade].join('|');
-
-export function lerModoDaUrl(): Modo {
-  const q = new URLSearchParams(location.search);
-  const c = q.get('cenario');
-  if (c && ['aguardando', 'vazio', 'falha', 'instavel', 'lento'].includes(c)) return `cenario-${c}` as Modo;
-  return q.get('fonte') === 'simulacao' ? 'simulacao' : 'oficial';
-}
+const escopo = (e: EstadoUrl) => [e.turno, e.cargo, e.uf, e.mun, e.zona, e.zz, e.pais, e.cidade].join('|');
 
 export function trocarModo(modo: Modo) {
   const q = new URLSearchParams(location.search);
@@ -34,7 +30,7 @@ export function definirValidadores(v: () => Validadores) {
 }
 
 function aplicarDaUrl(substituir = false) {
-  const e = parseHash(location.hash, validadoresAtuais());
+  const e = parseHash(location.hash, validadoresAtuais(), turnoPadrao());
   aplicandoDaUrl = true;
   useEstado.getState().definirNav(e);
   aplicandoDaUrl = false;

@@ -41,7 +41,9 @@ Azul `#1E57C9` · vermelho `#D82121` · cinza neutro `#A8A8A8` · fundo `#F4F4F4
 
 ## Próximos passos possíveis
 
-1. 2º turno (25/10/2026): códigos de eleição novos, turno 2 no adaptador, escopo e textos.
+1. 2º turno (25/10/2026): a navegação por turno e a página existem (`src/features/segundo-turno`,
+   `#2turno`); falta coletar a apuração — códigos de eleição novos, turno 2 no adaptador, um feed
+   próprio do turno 2 — e mostrá-la na página, mantendo o 1º turno acessível pelo seletor.
 2. Exercitar o coletor ao vivo numa divulgação real e passar a série da linha do tempo para o
    arquivo próprio.
 3. Assets pendentes: bandeiras das UFs, imagem social, arte publicitária real.

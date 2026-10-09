@@ -8,6 +8,7 @@ import { Faixas } from '../features/comercial/Faixas';
 import { Desktop } from './telas/Desktop';
 import { Celular } from './telas/Celular';
 import { Tv } from './telas/Tv';
+import { PaginaSegundoTurno } from '../features/segundo-turno/SegundoTurno';
 import { Sobreposicoes } from './Sobreposicoes';
 import { usarAtalhos } from './atalhos';
 import { usePresenca } from '../features/presenca/usePresenca';
@@ -20,7 +21,9 @@ export function App() {
   const tv = useEstado((s) => s.nav.tv);
   const nav = useEstado((s) => s.nav);
   const modo = useEstado((s) => s.modo);
+  const segundoTurno = nav.turno === 2 && !tv;
   const carregandoGeo = !useGeoBrasil().dados;
+  const carregando2t = useEstado((s) => !s.agoraVivo || !s.catalogo);
 
   // inicialização: modo de dados, URL e acompanhamento ao vivo
   useEffect(() => {
@@ -57,17 +60,20 @@ export function App() {
   // título do documento acompanha o contexto
   useEffect(() => {
     const partes = ['Apuração 2026'];
-    if (nav.zz) partes.unshift('Exterior');
+    if (nav.turno === 2) partes.unshift('2º turno');
+    else if (nav.zz) partes.unshift('Exterior');
     else if (nav.uf) partes.unshift(nav.uf);
     document.title = partes.join(' · ');
-  }, [nav.uf, nav.zz]);
+  }, [nav.turno, nav.uf, nav.zz]);
 
   const carregandoMapa = useMapa((s) => s.carregando);
+  // a página do 2º turno não tem mapa: está pronta quando o resultado do 1º turno chega
+  const carregando = segundoTurno ? carregando2t : carregandoGeo || carregandoMapa;
 
   return (
-    <div className={`app v-${layout.variante} altura-${layout.altura} modo-${modo}`} data-carregando={carregandoGeo || carregandoMapa ? 'sim' : 'nao'}>
+    <div className={`app v-${layout.variante} altura-${layout.altura} modo-${modo} turno-${segundoTurno ? 2 : 1}`} data-carregando={carregando ? 'sim' : 'nao'}>
       {!tv && <Faixas refRaiz={setFaixas} variante={layout.variante} />}
-      {layout.variante === 'tv' ? <Tv layout={layout} /> : layout.variante === 'desktop' ? <Desktop layout={layout} topo={hFaixas} /> : <Celular layout={layout} topo={hFaixas} />}
+      {layout.variante === 'tv' ? <Tv layout={layout} /> : segundoTurno ? <PaginaSegundoTurno layout={layout} topo={hFaixas} /> : layout.variante === 'desktop' ? <Desktop layout={layout} topo={hFaixas} /> : <Celular layout={layout} topo={hFaixas} />}
       <Sobreposicoes variante={layout.variante} />
     </div>
   );

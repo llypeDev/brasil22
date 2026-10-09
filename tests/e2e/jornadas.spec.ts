@@ -337,3 +337,38 @@ test('T15 · girar o celular mantém o layout usável e o mapa clicável', async
   await expect(page).toHaveURL(/#presidente-[a-z]{2}-\d{7}$/);
   await ctx.close();
 });
+
+test('T16 · sem fragmento abre o 2º turno; dele se vai ao 1º turno e se volta', async ({ page }) => {
+  const turnos = page.getByRole('group', { name: 'Turno' });
+  const turno = (n: 1 | 2) => turnos.getByRole('button', { name: `${n}º turno` });
+  await abrir(page, '/?semAnuncio');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Flávio Bolsonaro e Lula disputam a Presidência');
+  await expect(turno(2)).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.p2t-gov > li')).toHaveCount(7);
+  await expect(page).toHaveTitle(/^2º turno · /);
+
+  // um estado da grade abre o mapa do 1º turno nele
+  await page.getByRole('button', { name: /^São Paulo: / }).click();
+  await expect(page).toHaveURL(/#presidente-sp$/);
+  await expect(turno(1)).toHaveAttribute('aria-pressed', 'true');
+  // o seletor guarda o lugar do 1º turno; Esc não sai da página do 2º
+  await turno(2).click();
+  await expect(page).toHaveURL(/#2turno$/);
+  await page.keyboard.press('Escape');
+  await expect(page).toHaveURL(/#2turno$/);
+  await turno(1).click();
+  await expect(page).toHaveURL(/#presidente-sp$/);
+  await page.goBack();
+  await expect(page).toHaveURL(/#2turno$/);
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+
+  // o botão da abertura leva ao resumo nacional do 1º turno
+  await page.getByRole('button', { name: /^Ver como foi o 1º turno/ }).click();
+  await expect(page).toHaveURL(/#presidente$/);
+  await expect(page.locator('#manchete-pres')).toContainText('vão ao 2º turno');
+  // atalho de cargo, a partir do 2º turno, leva ao painel do 1º
+  await turno(2).click();
+  await page.keyboard.press('2');
+  await expect(page).toHaveURL(/#governadores$/);
+  await expect(abaCargo(page, 'Governadores')).toHaveAttribute('aria-pressed', 'true');
+});

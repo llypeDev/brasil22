@@ -11,6 +11,7 @@
 .topo-celular .marca { gap: 3px 8px; }
 .topo-celular .marca b { font-size: 20px; }
 .tc-linha .vivo { margin-right: auto; }
+.tc-acoes { display: flex; align-items: center; gap: 8px; flex: none; }
 .tc-pessoas { display: inline-flex; align-items: center; gap: 4px; font-size: var(--t-label); color: var(--fg-3); }
 .painel.fluxo .abas-cargo { justify-content: space-between; }
 .painel.fluxo .abas-cargo button { flex: 1; justify-content: center; padding: 0 8px; height: 36px; }

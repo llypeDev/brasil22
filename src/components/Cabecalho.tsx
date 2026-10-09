@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useEstado } from '../app/store';
-import { CARGOS, type Cargo } from '../app/hash';
+import { CARGOS, type Cargo, type Turno } from '../app/hash';
 import { MARCA } from '../app/marca';
 import { horaDe, horaIso, pctS } from '../data/formato';
 import { fracaoSecoes } from '../data/calculos';
@@ -32,6 +32,21 @@ export function Marca({ compacta = false }: { compacta?: boolean }) {
           ))}
         </nav>
       )}
+    </div>
+  );
+}
+
+const TURNOS: Turno[] = [1, 2];
+
+/** 1º turno: painel completo (mapa, cargos, lugares). 2º turno: a disputa de 25 de outubro. */
+export function AbasTurno({ largo = false }: { largo?: boolean }) {
+  const turno = useEstado((s) => s.nav.turno);
+  const navegar = useEstado((s) => s.navegar);
+  return (
+    <div className={`abas-turno ${largo ? 'largo' : ''}`} role="group" aria-label="Turno">
+      {TURNOS.map((t) => (
+        <button key={t} aria-pressed={t === turno} onClick={() => navegar({ turno: t })} aria-label={`${t}º turno`}><span>{t}º<span className="lbl-turno"> turno</span></span></button>
+      ))}
     </div>
   );
 }
@@ -113,25 +128,33 @@ export async function compartilhar() {
 export function Cabecalho() {
   const zz = useEstado((s) => s.nav.zz);
   const cargo = useEstado((s) => s.nav.cargo);
+  const turno = useEstado((s) => s.nav.turno);
   const navegar = useEstado((s) => s.navegar);
   const pessoas = useEstado((s) => s.pessoas);
+  // cargos, exterior, indicador do lote e modo TV são do painel do 1º turno
+  const primeiro = turno === 1;
   return (
     <header className="topo">
       <Marca />
       <div className="topo-centro">
-        <AbasCargo />
+        <AbasTurno />
+        {primeiro && <AbasCargo />}
         <BotaoBusca />
       </div>
       <div className="topo-dir">
-        <IndicadorVivo />
+        {primeiro && <IndicadorVivo />}
         {pessoas != null && <span className="pessoas-topo sr">{pessoas} {pessoas === 1 ? 'pessoa' : 'pessoas'} com a página aberta</span>}
-        <button className="btn exterior" aria-pressed={zz} onClick={() => navegar(zz ? { zz: false } : { cargo: cargo === 'presidente' ? cargo : 'presidente', zz: true })} aria-label="Ver os votos do exterior">
-          <IconeGlobo /><span className="lbl">Exterior</span>
-        </button>
+        {primeiro && (
+          <button className="btn exterior" aria-pressed={zz} onClick={() => navegar(zz ? { zz: false } : { cargo: cargo === 'presidente' ? cargo : 'presidente', zz: true })} aria-label="Ver os votos do exterior">
+            <IconeGlobo /><span className="lbl">Exterior</span>
+          </button>
+        )}
         <button className="icone grande" onClick={compartilhar} aria-label="Compartilhar esta vista"><IconeCompartilhar /></button>
-        <button className="btn tvb" onClick={() => entrarNaTv()} aria-label="Tela cheia (modo TV, com roteiro automático)">
-          <IconeTelaCheia /><span className="lbl">Tela cheia</span>
-        </button>
+        {primeiro && (
+          <button className="btn tvb" onClick={() => entrarNaTv()} aria-label="Tela cheia (modo TV, com roteiro automático)">
+            <IconeTelaCheia /><span className="lbl">Tela cheia</span>
+          </button>
+        )}
       </div>
     </header>
   );

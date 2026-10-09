@@ -40,6 +40,8 @@ img { display: block; }
 .btn.fantasma:hover { background: rgba(0,0,0,.05); color: var(--fg); }
 .btn.cheio { background: var(--verde); color: #FFF; border-color: var(--verde); }
 .btn.cheio:hover { background: var(--verde-escuro); border-color: var(--verde-escuro); }
+.btn.amarelo { background: var(--amarelo); color: var(--verde-escuro); border-color: var(--amarelo); font-weight: 600; }
+.btn.amarelo:hover { background: #FFE94D; border-color: #FFE94D; }
 
 .icone {
   all: unset; cursor: pointer; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px;

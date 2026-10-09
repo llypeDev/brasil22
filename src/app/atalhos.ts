@@ -29,6 +29,8 @@ export function fecharCamadaDoTopo(): boolean {
 export function voltarUmNivel(): boolean {
   const s = useEstado.getState();
   const n = s.nav;
+  // a página do 2º turno não tem níveis; o lugar guardado é o do 1º turno
+  if (n.turno === 2) return false;
   if (n.t != null) { s.navegar({ t: null }); return true; }
   if (n.zona) { s.navegar({ zona: null }); return true; }
   if (n.mun) { s.navegar({ mun: null }); return true; }

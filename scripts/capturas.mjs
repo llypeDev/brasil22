@@ -41,6 +41,8 @@ const CENAS = [
   { nome: '27-presidente-candidato', url: '/?semAnuncio#presidente~c13', vp: [1600, 900] },
   { nome: '28-governador-uf', url: '/?semAnuncio#governadores-rj', vp: [1600, 900] },
   { nome: '29-anuncio-modal', url: '/#presidente', vp: [1600, 900], modal: true },
+  { nome: '30-segundo-turno-desktop', url: '/?semAnuncio#2turno', vp: [1600, 900] },
+  { nome: '31-segundo-turno-celular', url: '/?semAnuncio#2turno', vp: [390, 844], mobile: true },
 ];
 
 async function esperarPronto(p) {

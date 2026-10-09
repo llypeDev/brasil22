@@ -48,8 +48,10 @@ abrangências idênticas em votos, seções, comparecimento, brancos, nulos e si
 
 - **Coletor ao vivo** (`npm run coletor`): implementado, com arquivamento e publicação atômica,
   mas **não exercido durante uma divulgação real** do TSE.
-- **2º turno (25/10/2026)**: não suportado ainda — o adaptador aceita só turno 1 e os códigos de
-  eleição 6257/6259; faltam os novos códigos, o escopo (presidente e os 7 governos em 2º turno) e os textos.
+- **2º turno (25/10/2026)**: a página do 2º turno (`#2turno`, aberta por padrão) apresenta as
+  disputas com o resultado final do 1º turno, mas a **apuração do 2º turno não é coletada** ainda —
+  o adaptador aceita só turno 1 e os códigos de eleição 6257/6259; faltam os novos códigos, o feed
+  do turno 2 e a apuração na página. Depois da data, a página avisa que os resultados não estão nela.
 - **Hospedagem**: servidor Node 22.13+ com disco gravável para `dados/` (feed, arquivo e
   pedidos). Atrás de proxy, `CONFIAR_PROXY=1`. Sem segredos obrigatórios; `PEDIDOS_SAL` próprio é
   recomendado.

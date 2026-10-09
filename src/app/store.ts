@@ -3,7 +3,8 @@
 
 import { create } from 'zustand';
 import type { Agora, Catalogo, Manifesto, Modo } from '../data/contratos';
-import { ESTADO_INICIAL, type Camada, type Cargo, type EstadoUrl } from './hash';
+import { ESTADO_INICIAL, parseHash, type Camada, type Cargo, type EstadoUrl } from './hash';
+import { turnoPadrao } from './modo';
 
 export type Conexao = 'conectando' | 'ao-vivo' | 'reconectando' | 'sem-conexao';
 export type CargoPerfil = 'presidente' | 'governador' | 'senador' | 'deputado';
@@ -47,6 +48,10 @@ export interface Estado {
 /** Regras de compatibilidade ao navegar (ex.: exterior só existe para presidente). */
 export function normalizarNav(atual: EstadoUrl, p: Partial<EstadoUrl>): EstadoUrl {
   const n: EstadoUrl = { ...atual, ...p };
+  // Cargos, lugares, camadas, instante e TV só existem no 1º turno: navegar por eles sai da
+  // página do 2º turno. Ao trocar só o turno, o 1º turno volta ao ponto em que estava.
+  if (p.turno == null && Object.keys(p).length > 0) n.turno = 1;
+  if (n.turno === 2) { n.tv = false; n.t = null; }
   const trocouCargo = p.cargo != null && p.cargo !== atual.cargo;
   if (n.zz) { n.uf = null; n.mun = null; n.zona = null; }
   if (n.zz && n.cargo !== 'presidente') { n.zz = false; n.pais = null; n.cidade = null; }
@@ -66,7 +71,8 @@ export function normalizarNav(atual: EstadoUrl, p: Partial<EstadoUrl>): EstadoUr
 }
 
 export const useEstado = create<Estado>((set, get) => ({
-  nav: ESTADO_INICIAL,
+  // lido já na criação para a primeira pintura não mostrar o turno errado
+  nav: typeof location === 'undefined' ? ESTADO_INICIAL : parseHash(location.hash, {}, turnoPadrao()),
   modo: 'oficial',
   manifesto: null,
   catalogo: null,
